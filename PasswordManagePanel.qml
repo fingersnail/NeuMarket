@@ -7,16 +7,18 @@ Rectangle{
     property alias mainrect:mainrect
     property real tableWidth: 80
     property real signleLineHeight:30
-    property int  c_index: 10
+    property int current_index: -1
     id:mainrect
 
     Rectangle {
         id:leftrect
         width:parent.width*0.5
-        height:parent.height*0.85
+        height:parent.height
 
         TableView
         {
+            property string var2;
+
             id:tableView
             anchors.fill: parent
             model:tableModel
@@ -31,21 +33,23 @@ Rectangle{
                 ListElement
                 {
                     c_id:"1"
-                    code:"101"
-                    name:"xiaoli"
+                    var0:101
+                    var1:"xiaoli"
+                    var2: "231ju"
                 }
                 ListElement
                 {
                     c_id:"2"
-                    code:"102"
-                    name:"xiaoming"
+                    var0:102
+                    var1:"xiaoming"
+                    var2: "231ju"
                 }
                 ListElement
                 {
                     c_id:"3"
-                    code:"103"
-                    name:"xiaotong"
-
+                    var0:103
+                    var1:"xiaotong"
+                    var2: "231ju"
                 }
 
             }
@@ -104,7 +108,7 @@ Rectangle{
             {
 
                 width: tableView.width*0.4
-                role:"code"
+                role:"var0"
                 title:"员工号"
                 delegate:Rectangle
                 {
@@ -121,7 +125,7 @@ Rectangle{
             {
 
                 width: tableView.width*0.4
-                role:"name"
+                role:"var1"
                 title:"姓名"
                 delegate:Rectangle
                 {
@@ -135,104 +139,18 @@ Rectangle{
 
             }
 
-        }
-    }
-//            itemDelegate:Rectangle
-//            {
-//                id:signalitem
-//                MouseArea{
-//                    id:mouse_delegate
-//                    acceptedButtons: Qt.RightButton|Qt.LeftButton
-//                    hoverEnabled: true
-//                    propagateComposedEvents: true
-//                    enabled:true
-//                    anchors.fill: parent
-//                    onEntered:{
-//                        signalitem.color = "blue"
-//                    }
-//                    onExited:{
-//                        signalitem.color = "transparent"
-//                    }
-//                    onDoubleClicked: {
-//                        mouse.accepted = false;
-//                        console.log("item double click.");
-//                        //鼠标双击属性进入编辑界面
-//                        functionpart.visible=true;
-//                    }
-//                }
-//            }
+           onClicked:  {
+               current_index = row;
+               show_detail(row);
+           }
 
-
-//        }
-
-//    }
-Rectangle {
-    //add item
-    id: buttonrect_one
-    width:leftrect.width/2
-    height:parent.height*0.15
-    anchors.top:leftrect.bottom
-
-    color: 'transparent'
-    Image {
-        width: 50
-        height: 50
-        anchors.centerIn: parent
-        source: "pic/add.png"
-    }
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        onEntered:{
-
-            parent.color = Qt.rgba(220/225, 220/225, 220/225, 0.5);
-        }
-        onExited:{
-            parent.color = 'transparent'
-        }
-        onClicked: {
-            c_index++;
-            tableView.model.append({ "c_id":c_index.toString(),
-                                     "code":"09090",
-                                     "name":"xiaoxiao"});
-        }
-    }
-}
-Rectangle
-{
-
-    id:buttonrect_two
-    width:leftrect.width/2
-    height:parent.height*0.15
-    anchors.left:buttonrect_one.right
-    anchors.top:leftrect.bottom
-    color: "transparent"
-    Image {
-        width: 50
-        height: 50
-        anchors.centerIn: parent
-        source: "pic/delete.png"
-    }
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        onEntered:{
-
-            parent.color = Qt.rgba(220/225, 220/225, 220/225, 0.5);
-        }
-        onExited:{
-            parent.color = 'transparent'
-        }
-        onClicked: {
-            if(tableView.model.count > 0)
-            {
-                tableView.model.remove(0);
-            }
+           onDoubleClicked: {
+               current_index = row;
+               show_detail(row);
+           }
         }
     }
 
-
-}
 
 Rectangle
 {
@@ -277,7 +195,7 @@ Rectangle
                 font.pointSize: 14
             }
             MyTextField {
-                id: person_address
+                id: person_password
                 width: mainrect.width*0.3
 
                 }
@@ -288,13 +206,59 @@ Rectangle
             anchors.rightMargin: 55
             anchors.top:infolist.bottom
             anchors.topMargin: 15
-
+            onClicked: {
+                if (current_index != -1) {
+                    save_user();
+                }
+            }
         }
 
     }
 
     function active() {
         visible = true;
+        refresh_list();
+        clear_input_area();
+    }
+
+    function refresh_list() {
+        controller.getStuffMainInfo();
+    }
+
+    function show_detail(index) {
+        person_id.text = tableModel.get(index).var0;
+        person_name.text = tableModel.get(index).var1;
+        person_password.text = tableModel.get(index).var2;
+    }
+
+    function save_user() {
+        controller.addUser([person_id.text,person_name.text,
+                            person_password.text]);
+    }
+
+    Connections {
+        target: controller
+        onStuffMainInfo: {
+            tableModel.clear();
+
+            for (var i = 0; i <theclassmodel.rowCount(); i++) {
+                tableModel.append({"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                                 "var2":theclassmodel.rowColData(i,2)})
+            }
+            current_index = -1;
+        }
+    }
+
+    Connections {
+        target: controller
+        onStuffMainInfoSaved:{
+            if(ok){
+                color_true.running = true;
+                refresh_list();
+            } else {
+                color_false.running = true;
+            }
+        }
     }
 }
 
