@@ -2,12 +2,14 @@ import QtQuick 2.0
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
+
 Rectangle{
     property alias tableView: tableView
     property alias mainrect:mainrect
     property real tableWidth: 80
     property real signleLineHeight:30
-    property int  c_index: 10
+    property int current_index: -1
     id:mainrect
 
     Rectangle {
@@ -27,27 +29,37 @@ Rectangle{
             signal signalShowMenu(var id,int x,int y)
             ListModel
             {
+                //var0 user_id, var1 user_name, var2 tel,
+                //var3 address, var4 authority
+
+                property string var2;
+                property string var3;
+                property int var4;
+
                 id:tableModel
-                ListElement
-                {
+                ListElement {
                     c_id:"1"
-                    code:"101"
-                    name:"xiaoli"
-                    authority:"用户"
-                                  }
-                ListElement
-                {
-                    c_id:"2"
-                    code:"102"
-                    name:"xiaoming"
-                    authority:"用户"
+                    var0:"101"
+                    var1:"xiaoli"
+                    var2:"14522231321"
+                    var3:"iu"
+                    var4:31
                 }
-                ListElement
-                {
+                ListElement {
+                    c_id:"2"
+                    var0:"102"
+                    var1:"xiaoming"
+                    var2:"14522231321"
+                    var3:"iu"
+                    var4:31
+                }
+                ListElement {
                     c_id:"3"
-                    code:"103"
-                    name:"xiaotong"
-                    authority:"10001"
+                    var0:"103"
+                    var1:"xiaoing"
+                    var2:"14522231321"
+                    var3:"iu"
+                    var4:15
                 }
 
             }
@@ -107,7 +119,7 @@ Rectangle{
             {
 
                 width: tableView.width*0.45
-                role:"code"
+                role:"var0"
                 title:"用户id号"
                 delegate:Rectangle
                 {
@@ -124,7 +136,7 @@ Rectangle{
             {
 
                 width: tableView.width*0.45
-                role:"name"
+                role:"var1"
                 title:"姓名"
                 delegate:Rectangle
                 {
@@ -137,62 +149,18 @@ Rectangle{
                 }
 
             }
-            /*TableViewColumn{
-                role:"authority"
-                title: "权限"
-                width: tableView.width*0.4
-                delegate: Rectangle{
+           onClicked:  {
+               current_index = row;
+               show_detail(row);
+           }
 
-                    height:  signleLineHeight
-                    color: "transparent"
-                    ComboBox{
-                        width: parent.width*0.2
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        model: ["0","1"]
-                    }
-
-                    ComboBox{
-                        width: parent.width*0.2
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        model: ["0","1"]
-                    }
-
-                }
-            }*/
-            }
+           onDoubleClicked: {
+               current_index = row;
+               show_detail(row);
+           }
         }
+    }
 
-//            itemDelegate:Rectangle
-//            {
-//                id:signalitem
-//                MouseArea{
-//                    id:mouse_delegate
-//                    acceptedButtons: Qt.RightButton|Qt.LeftButton
-//                    hoverEnabled: true
-//                    propagateComposedEvents: true
-//                    enabled:true
-//                    anchors.fill: parent
-//                    onEntered:{
-//                        signalitem.color = "blue"
-//                    }
-//                    onExited:{
-//                        signalitem.color = "transparent"
-//                    }
-//                    onDoubleClicked: {
-//                        mouse.accepted = false;
-//                        console.log("item double click.");
-//                        //鼠标双击属性进入编辑界面
-//                        functionpart.visible=true;
-//                    }
-//                }
-//            }
-
-
-//        }
-
-//    }
 Rectangle {
     //add item
     id: buttonrect_one
@@ -211,17 +179,13 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onEntered:{
-
             parent.color = Qt.rgba(220/225, 220/225, 220/225, 0.5);
         }
         onExited:{
             parent.color = 'transparent'
         }
-        onClicked: {
-            c_index++;
-            tableView.model.append({ "c_id":c_index.toString(),
-                                     "code":"09090",
-                                     "name":"xiaoxiao"});
+        onReleased: {
+            clear_input_area();
         }
     }
 }
@@ -251,9 +215,9 @@ Rectangle
             parent.color = 'transparent'
         }
         onClicked: {
-            if(tableView.model.count > 0)
-            {
-                tableView.model.remove(0);
+            onClicked: {
+                if (current_index >= 0)
+                    message_dialog.open();
             }
         }
     }
@@ -332,26 +296,31 @@ Rectangle
                 columns:3
                 columnSpacing: 3
                 rowSpacing: 15
-            MyCheckBox {
-                text: qsTr("人事管理")
-                width:90
-            }
-            MyCheckBox {
-                text: qsTr("销售管理")
-                width:90
-            }
-            MyCheckBox {
-                text: qsTr("进货管理")
-                width:90
-            }
-            MyCheckBox {
-                text: qsTr("库存管理")
-                width:90
-            }
-            MyCheckBox {
-                text: qsTr("系统管理")
-                width:90
-            }
+                MyCheckBox {
+                    id: authority1
+                    text: qsTr("人事管理")
+                    width:90
+                }
+                MyCheckBox {
+                    id: authority2
+                    text: qsTr("销售管理")
+                    width:90
+                }
+                MyCheckBox {
+                    id: authority3
+                    text: qsTr("进货管理")
+                    width:90
+                }
+                MyCheckBox {
+                    id: authority4
+                    text: qsTr("库存管理")
+                    width:90
+                }
+                MyCheckBox {
+                    id: authority5
+                    text: qsTr("系统管理")
+                    width:90
+                }
          }
 
         }
@@ -362,13 +331,179 @@ Rectangle
             anchors.rightMargin: 55
             anchors.top:infolist.bottom
             anchors.topMargin: 15
-
+            onClicked: {
+                if (current_index == -1) {
+                    add_user();
+                } else {
+                    save_user();
+                }
+            }
         }
 
     }
 
+    MessageDialog{
+      id:message_dialog
+      standardButtons: StandardButton.Yes | StandardButton.No
+      modality: Qt.ApplicationModal
+      title: "删除"
+      text:"你确定要删除该职工吗？"
+      onYes: {
+          delete_row = current_index;
+          controller.deleteUser(tableModel.get(current_index).var0);
+      }
+    }
     function active() {
         visible = true;
+        refresh_list();
+        clear_input_area();
+    }
+
+    function refresh_list() {
+        controller.getAllUsers();
+    }
+
+    function clear_input_area() {
+        current_index = -1;
+        person_id.text = "";
+        person_name.text = "";
+        person_tel.text = "";
+        person_address.text = ""
+
+        authority1.checked = false;
+        authority2.checked = false;
+        authority3.checked = false;
+        authority4.checked = false;
+        authority5.checked = false;
+    }
+
+    function show_detail(index) {
+        person_id.text = tableModel.get(index).var0;
+        person_name.text = tableModel.get(index).var1;
+        person_tel.text = tableModel.get(index).var2;
+        person_address.text = tableModel.get(index).var3;
+
+        var auth = authorityPaser(tableModel.get(index).var4);
+        if(auth[0])
+            authority1.checked = true;
+        else
+            authority1.checked = false;
+        if(auth[1])
+            authority2.checked = true;
+        else
+            authority2.checked = false;
+        if(auth[2])
+            authority3.checked = true;
+        else
+            authority3.checked = false;
+        if(auth[3])
+            authority4.checked = true;
+        else
+            authority4.checked = false;
+        if(auth[4])
+            authority5.checked = true;
+        else
+            authority5.checked = false;
+    }
+
+    function authorityPaser(level) {
+        var authority = [];
+        if (level % 2 == 1)
+            authority[0] = true;
+        level = parseInt(level / 2);
+        if (level % 2 == 1)
+            authority[1] = true;
+        level = parseInt(level / 2);
+        if (level % 2 == 1)
+            authority[2] = true;
+        level = parseInt(level / 2);
+        if (level % 2 == 1)
+            authority[3] = true;
+        level = parseInt(level / 2);
+        if (level % 2 == 1)
+            authority[4] = true;
+        return authority;
+    }
+
+    function getAuthorityNum() {
+        var num = 0;
+        if (authority5.checked)
+            num += 1;
+        num *=2;
+        if (authority4.checked)
+            num += 1;
+        num *=2;
+        if (authority3.checked)
+            num += 1;
+        num *=2;
+        if (authority2.checked)
+            num += 1;
+        num *=2;
+        if (authority1.checked)
+            num += 1;
+        return num;
+    }
+
+    function save_user() {
+        controller.saveUser([tableModel.get(current_index).var0,person_name.text,
+                             person_tel.text,person_address.text,
+                             getAuthorityNum()]);
+    }
+
+    function add_user() {
+        controller.addUser([person_name.text,person_tel.text,
+                            person_address.text,getAuthorityNum()]);
+    }
+
+    Connections {
+        target: controller
+        onAllUsers: {
+            tableModel.clear();
+
+            for (var i = 0; i <theclassmodel.rowCount(); i++) {
+                tableModel.append({"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                                 "var2":theclassmodel.rowColData(i,2), "var3":theclassmodel.rowColData(i,3),
+                                 "var4":theclassmodel.rowColData(i,4)})
+            }
+            current_index = -1;
+        }
+    }
+
+    Connections {
+        target: controller
+        onUserSaved:{
+            if(ok){
+                color_true.running = true;
+                refresh_list();
+            } else {
+                color_false.running = true;
+            }
+        }
+    }
+
+    property int delete_row: -1;
+    Connections {
+        target: controller
+        onUserDeleted:{
+            if(ok){
+                tableModel.remove(delete_row);
+                clear_input_area();
+                color_true.running = true;
+            } else {
+                color_false.running = true;
+            }
+        }
+    }
+    Connections {
+        target: controller
+        onUserAdded:{
+            if(ok){
+                color_true.running = true;
+                refresh_list();
+            } else {
+                color_false.running = true;
+            }
+        }
     }
 }
 

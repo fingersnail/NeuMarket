@@ -188,7 +188,6 @@ Rectangle {
                             exclusiveGroup: finish_group
                             checked: styleData.value ? true :false
                             onClicked: {
-                                //console.log("click finish");
                                 if (!tableModel.get(styleData.row).var8)
                                     controller.changePlanState(tableModel.get(
                                 styleData.row).var0, true);
@@ -199,7 +198,6 @@ Rectangle {
                             exclusiveGroup: finish_group
                             checked: styleData.value ? false :true
                             onClicked: {
-                                console.log("click finish");
                                 if (tableModel.get(styleData.row).var8)
                                     controller.changePlanState(tableModel.get(
                                 styleData.row).var0, false);
@@ -448,7 +446,7 @@ MessageDialog{
   text:"你确定要删除该计划吗？"
   onYes: {
       delete_row = current_index;
-      controller.deletePlan(tableModel.get(current_index).var3);
+      controller.deletePlan(tableModel.get(current_index).var0);
   }
 }
 
@@ -494,10 +492,15 @@ function show_detail(index) {
         create_row.visible = false;
     }
 
-    if (tableModel.get(index).var8)
+    if (tableModel.get(index).var8) {
+        unfinish_check.checked = false;
         finish_check.checked = true;
-    else
+    }
+    else {
         finish_check.checked = false;
+        unfinish_check.checked = true;
+    }
+
     additional_info.text = tableModel.get(index).var9;
 
     suppliers.currentIndex = suppliers.find(tableModel.get(index).var4);

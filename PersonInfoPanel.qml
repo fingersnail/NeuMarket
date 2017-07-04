@@ -2,13 +2,15 @@ import QtQuick 2.0
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
+
 Rectangle{
     property alias tableView: tableView
     property alias mainrect:mainrect
     property real tableWidth: 80
-
     property real signleLineHeight:30
-    property int  c_index: 10
+
+    property int current_index: -1
     id:mainrect
 
     Rectangle {
@@ -16,8 +18,14 @@ Rectangle{
         width:parent.width*0.5
         height:parent.height*0.85
 
-        TableView
-        {
+        TableView {
+            //var0 user_id, var1 user_name, var2 tel,
+            //var3 address, var4 isPosition, var5 authority
+
+            property string var2;
+            property string var3;
+            property int var5;
+
             id:tableView
             anchors.fill: parent
             model:tableModel
@@ -26,36 +34,40 @@ Rectangle{
             backgroundVisible:false
             clip: true
             signal signalShowMenu(var id,int x,int y)
-            ListModel
-            {
+            ListModel {
                 id:tableModel
-                ListElement
-                {
+                ListElement {
                     c_id:"1"
-                    code:"101"
-                    name:"xiaoli"
-                    state:"在职"
+                    var0:"101"
+                    var1:"xiaoli"
+                    var2:"14522231321"
+                    var3:"iu"
+                    var4:true
+                    var5: 31
                 }
-                ListElement
-                {
+                ListElement {
                     c_id:"2"
-                    code:"102"
-                    name:"xiaoming"
-                    state:"不在职"
+                    var0:"102"
+                    var1:"xiaoming"
+                    var2:"14522231321"
+                    var3:"iu"
+                    var4:false
+                    var5: 31
                 }
-                ListElement
-                {
+                ListElement {
                     c_id:"3"
-                    code:"103"
-                    name:"xiaotong"
-                    state:"在职"
+                    var0:"103"
+                    var1:"xiaoing"
+                    var2:"14522231321"
+                    var3:"iu"
+                    var4:false
+                    var5: 15
                 }
-
             }
             //定义表头格式
             Component{
                 id:headerDele
-                Rectangle{
+                Rectangle {
                     id:changecolorcom
                     implicitWidth:tableWidth
                     implicitHeight: 45
@@ -64,12 +76,11 @@ Rectangle{
                         target: color_pick_panel;
                         onColorChange: {changecolorcom.color = Qt.rgba(red / 255,green / 255,blue / 255, 0.8)}
                     }
-                    Text{
+                    Text {
                         text:styleData.value
                         anchors.centerIn:parent
                         font.pointSize: 14
-                        }
-
+                    }
                 }
             }
             //定义行样式
@@ -82,18 +93,15 @@ Rectangle{
                     color:styleData.selected?"#450000ff":"#F0F0F0"
                     border.width: 1
                     border.color: "lightsteelblue"
-                                    }
+                 }
 
             }
             //id列样式
-            TableViewColumn
-            {
-
+            TableViewColumn {
                 width: tableView.width*0.1
                 role:"c_id"
                 title:" "
-                delegate:Rectangle
-                {
+                delegate:Rectangle {
                     color:"transparent"
                     height:signleLineHeight
                     Text{
@@ -101,128 +109,83 @@ Rectangle{
                         text:styleData.value
                     }
                 }
-
             }
-            TableViewColumn
-            {
-
+            TableViewColumn {
                 width: tableView.width*0.25
-                role:"code"
+                role:"var0"
                 title:"员工号"
-                delegate:Rectangle
-                {
+                delegate:Rectangle {
                     color:"transparent"
                     height:signleLineHeight
-                    Text{
+                    Text {
                         anchors.centerIn:parent
                         text:styleData.value
                     }
-                    MouseArea{
-                        id:mouse_delegate
-                        anchors.fill: parent
-                        acceptedButtons: Qt.RightButton|Qt.LeftButton
-                        hoverEnabled: true
-                        propagateComposedEvents: true
-                        onDoubleClicked: {
-                            mouse.accepted = false;
-                            console.log("item double click.");
-                            }
-                    }
                 }
-
             }
-           TableViewColumn
-            {
-
+            TableViewColumn {
                 width: tableView.width*0.25
-                role:"name"
+                role:"var1"
                 title:"姓名"
-                delegate:Rectangle
-                {
+                delegate:Rectangle {
                     color:"transparent"
                     height:signleLineHeight
-                    Text{
+                    Text {
                         anchors.centerIn:parent
                         text:styleData.value
                     }
-                    MouseArea{
-                        anchors.fill: parent
-                        acceptedButtons: Qt.RightButton|Qt.LeftButton
-                        hoverEnabled: true
-                        propagateComposedEvents: true
-//                        enabled:true
-//                                 onEntered:{
-//                            parent.color = "blue"
-//                            }
-//                        onExited:{
-//                            parent.color = "transparent"
-//                            }
-                        onDoubleClicked: {
-                            mouse.accepted = false;
-                            console.log("item double click.");
+                }
+            }
+            TableViewColumn {
+                role:"var4"
+                title: "在职情况"
+                width: tableView.width*0.4
+                delegate: Rectangle {
+                    height:  signleLineHeight
+                    color: "transparent"
+                    Row {
+                        anchors.centerIn: parent
+                        spacing: 20
+                        ExclusiveGroup {
+                            id:position_group
+                        }
+
+                        RadioButton{
+                            text:"在职"
+                            exclusiveGroup: position_group
+                            checked: styleData.value ? true :false
+                            onClicked: {
+                                if (!tableModel.get(styleData.row).var4)
+                                    controller.changePositionState(tableModel.get(
+                                    styleData.row).var0, true);
                             }
-                    }
-                }
-
-            }
-        TableViewColumn{
-            role:"state"
-            title: "在职情况"
-            width: tableView.width*0.4
-            delegate: Rectangle{
-            height:  signleLineHeight
-            color: "transparent"
-            Row{
-                anchors.centerIn: parent
-                spacing: 20
-                ExclusiveGroup{
-                    id:sex_group
-                    }
-
-                RadioButton{
-                    text:"在职"
-                   exclusiveGroup: sex_group
-                    checked: styleData.value === "在职" ? true :false
-                    }
-                RadioButton{
-                    text:"不在职"
-                    exclusiveGroup: sex_group
-                    checked: styleData.value === "不在职" ? true :false
+                        }
+                        RadioButton{
+                            text:"不在职"
+                            exclusiveGroup: position_group
+                            checked: styleData.value ? false :true
+                            onClicked: {
+                                if (tableModel.get(styleData.row).var4)
+                                    controller.changePositionState(tableModel.get(
+                                    styleData.row).var0, false);
+                            }
+                        }
                     }
                 }
             }
-         }
-       }
+
+            onClicked:  {
+                current_index = row;
+                show_detail(row);
+            }
+
+            onDoubleClicked: {
+                current_index = row;
+                show_detail(row);
+            }
+        }
     }
-//            itemDelegate:Rectangle
-//            {
-//                id:signalitem
-//                MouseArea{
-//                    id:mouse_delegate
-//                    acceptedButtons: Qt.RightButton|Qt.LeftButton
-//                    hoverEnabled: true
-//                    propagateComposedEvents: true
-//                    enabled:true
-//                    anchors.fill: parent
-//                    onEntered:{
-//                        signalitem.color = "blue"
-//                    }
-//                    onExited:{
-//                        signalitem.color = "transparent"
-//                    }
-//                    onDoubleClicked: {
-//                        mouse.accepted = false;
-//                        console.log("item double click.");
-//                        //鼠标双击属性进入编辑界面
-//                        functionpart.visible=true;
-//                    }
-//                }
-//            }
 
-
-//        }
-
-//    }
 Rectangle {
     //add item
     id: buttonrect_one
@@ -241,17 +204,13 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onEntered:{
-
             parent.color = Qt.rgba(220/225, 220/225, 220/225, 0.5);
         }
         onExited:{
             parent.color = 'transparent'
         }
-        onClicked: {
-            c_index++;
-            tableView.model.append({ "c_id":c_index.toString(),
-                                     "code":"09090",
-                                     "name":"xiaoxiao"});
+        onReleased: {
+            clear_input_area();
         }
     }
 }
@@ -281,9 +240,9 @@ Rectangle
             parent.color = 'transparent'
         }
         onClicked: {
-            if(tableView.model.count > 0)
-            {
-                tableView.model.remove(0);
+            onClicked: {
+                if (current_index >= 0)
+                    message_dialog.open();
             }
         }
     }
@@ -325,7 +284,6 @@ Rectangle
             MyTextField {
                 id: person_name
                 width: mainrect.width*0.3
-
             }
         }
         Row {
@@ -363,11 +321,13 @@ Rectangle
                 }
 
             MyRadioButton{
+                id: in_check
                 text:"在职"
                 exclusiveGroup: state_group
                 checked: styleData.value === "在职" ? true :false
                 }
             MyRadioButton{
+                id: out_check
                 text:"不在职"
                 exclusiveGroup: state_group
                 checked: styleData.value === "不在职" ? true :false
@@ -384,22 +344,27 @@ Rectangle
                 columnSpacing: 3
                 rowSpacing: 15
                 MyCheckBox {
+                    id: authority1
                     text: qsTr("人事管理")
                     width:90
                 }
                 MyCheckBox {
+                    id: authority2
                     text: qsTr("销售管理")
                     width:90
                 }
                 MyCheckBox {
+                    id: authority3
                     text: qsTr("进货管理")
                     width:90
                 }
                 MyCheckBox {
+                    id: authority4
                     text: qsTr("库存管理")
                     width:90
                 }
                 MyCheckBox {
+                    id: authority5
                     text: qsTr("系统管理")
                     width:90
                 }
@@ -411,13 +376,205 @@ Rectangle
             anchors.rightMargin: 55
             anchors.top:infolist.bottom
             anchors.topMargin: 15
-
+            onClicked: {
+                if (current_index == -1) {
+                    add_worker();
+                } else {
+                    save_worker();
+                }
+            }
         }
 
     }
 
+    MessageDialog{
+      id:message_dialog
+      standardButtons: StandardButton.Yes | StandardButton.No
+      modality: Qt.ApplicationModal
+      title: "删除"
+      text:"你确定要删除该职工吗？"
+      onYes: {
+          delete_row = current_index;
+          controller.deleteWorker(tableModel.get(current_index).var0);
+      }
+    }
+
     function active() {
         visible = true;
+        refresh_list();
+        clear_input_area();
+    }
+
+    function refresh_list() {
+        controller.listAllWorker();
+    }
+
+    function clear_input_area() {
+        current_index = -1;
+        person_id.text = "";
+        person_name.text = "";
+        person_tel.text = "";
+        person_address.text = ""
+        in_check.checked = true;
+        out_check.checked = false;
+
+        authority1.checked = false;
+        authority2.checked = false;
+        authority3.checked = false;
+        authority4.checked = false;
+        authority5.checked = false;
+    }
+
+    function show_detail(index) {
+        person_id.text = tableModel.get(index).var0;
+        person_name.text = tableModel.get(index).var1;
+        person_tel.text = tableModel.get(index).var2;
+        person_address.text = tableModel.get(index).var3;
+
+        if (tableModel.get(index).var4) {
+            out_check.checked = false;
+            in_check.checked = true;
+        }
+        else {
+            in_check.checked = false;
+            out_check.checked = true;
+        }
+
+        var auth = authorityPaser(tableModel.get(index).var5);
+        if(auth[0])
+            authority1.checked = true;
+        else
+            authority1.checked = false;
+        if(auth[1])
+            authority2.checked = true;
+        else
+            authority2.checked = false;
+        if(auth[2])
+            authority3.checked = true;
+        else
+            authority3.checked = false;
+        if(auth[3])
+            authority4.checked = true;
+        else
+            authority4.checked = false;
+        if(auth[4])
+            authority5.checked = true;
+        else
+            authority5.checked = false;
+    }
+
+    function authorityPaser(level) {
+        var authority = [];
+        if (level % 2 == 1)
+            authority[0] = true;
+        level = parseInt(level / 2);
+        if (level % 2 == 1)
+            authority[1] = true;
+        level = parseInt(level / 2);
+        if (level % 2 == 1)
+            authority[2] = true;
+        level = parseInt(level / 2);
+        if (level % 2 == 1)
+            authority[3] = true;
+        level = parseInt(level / 2);
+        if (level % 2 == 1)
+            authority[4] = true;
+        return authority;
+    }
+
+    function getAuthorityNum() {
+        var num = 0;
+        if (authority5.checked)
+            num += 1;
+        num *=2;
+        if (authority4.checked)
+            num += 1;
+        num *=2;
+        if (authority3.checked)
+            num += 1;
+        num *=2;
+        if (authority2.checked)
+            num += 1;
+        num *=2;
+        if (authority1.checked)
+            num += 1;
+        return num;
+    }
+
+    function save_worekr() {
+        controller.saveWorker([tableModel.get(current_index).var0,person_name.text,
+                             person_tel.text,person_address.text,
+                             in_check.checked, getAuthorityNum()]);
+    }
+
+    function add_worker() {
+        controller.addWorker([person_name.text,
+                            person_tel.text,person_address.text,
+                            in_check.checked,getAuthorityNum()]);
+    }
+
+    Connections {
+        target: controller
+        onAllWorkers: {
+            tableModel.clear();
+
+            for (var i = 0; i <theclassmodel.rowCount(); i++) {
+                tableModel.append({"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                                 "var2":theclassmodel.rowColData(i,2), "var3":theclassmodel.rowColData(i,3),
+                                 "var4":theclassmodel.rowColData(i,4),
+                                 "var5":theclassmodel.rowColData(i,5)})
+            }
+            current_index = -1;
+        }
+    }
+
+    Connections {
+        target: controller
+        onWorkerSaved:{
+            if(ok){
+                color_true.running = true;
+                refresh_list();
+            } else {
+                color_false.running = true;
+            }
+        }
+    }
+
+    property int delete_row: -1;
+    Connections {
+        target: controller
+        onWorkerDeleted:{
+            if(ok){
+                tableModel.remove(delete_row);
+                clear_input_area();
+                color_true.running = true;
+            } else {
+                color_false.running = true;
+            }
+        }
+    }
+    Connections {
+        target: controller
+        onWorkerAdded:{
+            if(ok){
+                color_true.running = true;
+                refresh_list();
+            } else {
+                color_false.running = true;
+            }
+        }
+    }
+
+    Connections {
+        target: controller
+        onPositionChanged: {
+            if(ok){
+                color_true.running = true;
+            } else {
+                color_false.running = true;
+                refresh_list();
+            }
+        }
     }
 }
 
