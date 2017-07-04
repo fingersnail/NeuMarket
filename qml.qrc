@@ -1,0 +1,76 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>ShadowRactangle.qml</file>
+        <file>LoginPanel.qml</file>
+        <file>WindowControl.qml</file>
+        <file>FunctionPanel.qml</file>
+        <file>Title.qml</file>
+        <file>NaviBar.qml</file>
+        <file>MenuButton.qml</file>
+        <file>DetailPanel.qml</file>
+        <file>SubMenuButton.qml</file>
+        <file>SubMenuBar.qml</file>
+        <file>SearchBar.qml</file>
+        <file>PersonInfoPanel.qml</file>
+        <file>SupplierInfoPanel.qml</file>
+        <file>SaleQueryPanel.qml</file>
+        <file>SaleMaintainPanel.qml</file>
+        <file>SaleStaticPanel.qml</file>
+        <file>StockPlanPanel.qml</file>
+        <file>RepertoryQueryPanel.qml</file>
+        <file>RepertoryStatisPanel.qml</file>
+        <file>PasswordManagePanel.qml</file>
+        <file>UserManagePanel.qml</file>
+        <file>ChartBar.qml</file>
+        <file>ChartTitleBar.qml</file>
+        <file>ColorPage.qml</file>
+        <file>ColorPickPanel.qml</file>
+        <file>Chart.qml</file>
+        <file>QChart.js</file>
+        <file>QChartGallery.js</file>
+        <file>MyTextField.qml</file>
+        <file>SaveButton.qml</file>
+        <file>DatePicker.qml</file>
+        <file>DeleteButton.qml</file>
+        <file>MyRadioButton.qml</file>
+        <file>MyCheckBox.qml</file>
+        <file>MyComboBox.qml</file>
+    </qresource>
+    <qresource prefix="/pic">
+        <file alias="shadow.png">pic/shadow.png</file>
+        <file alias="close_active.png">pic/close_active.png</file>
+        <file alias="close_stay.png">pic/close_stay.png</file>
+        <file alias="min_stay.png">pic/min_stay.png</file>
+        <file alias="min_active.png">pic/min_active.png</file>
+        <file alias="login_active.png">pic/login_active.png</file>
+        <file alias="login_stay.png">pic/login_stay.png</file>
+        <file alias="login_background.png">pic/login_background.png</file>
+        <file alias="car.png">pic/car.png</file>
+        <file alias="Person_manage.png">pic/Person_manage.png</file>
+        <file alias="repertory_manage.png">pic/repertory_manage.png</file>
+        <file alias="sale_manage.png">pic/sale_manage.png</file>
+        <file alias="stock_manage.png">pic/stock_manage.png</file>
+        <file alias="system_manage.png">pic/system_manage.png</file>
+        <file alias="person_manage_active.png">pic/person_manage_active.png</file>
+        <file alias="repertory_manage_active.png">pic/repertory_manage_active.png</file>
+        <file alias="sale_manage_active.png">pic/sale_manage_active.png</file>
+        <file alias="stock_manage_active.png">pic/stock_manage_active.png</file>
+        <file alias="system_manage_active.png">pic/system_manage_active.png</file>
+        <file alias="search.png">pic/search.png</file>
+        <file alias="hsv_button.png">pic/hsv_button.png</file>
+        <file alias="hsv.png">pic/hsv.png</file>
+        <file alias="59Pen.png">pic/supplier/59Pen.png</file>
+        <file alias="bilibili.png">pic/supplier/bilibili.png</file>
+        <file alias="instantnoodles.png">pic/supplier/instantnoodles.png</file>
+        <file alias="panegg.png">pic/supplier/panegg.png</file>
+        <file alias="penguin.png">pic/supplier/penguin.png</file>
+        <file alias="realmadrid.png">pic/supplier/realmadrid.png</file>
+        <file alias="squirrel.png">pic/supplier/squirrel.png</file>
+        <file alias="tao.png">pic/supplier/tao.png</file>
+        <file alias="delete.png">pic/delete.png</file>
+        <file alias="click.png">pic/click.png</file>
+        <file alias="add.png">pic/add.png</file>
+        <file alias="arrow_down.png">pic/arrow_down.png</file>
+    </qresource>
+</RCC>
