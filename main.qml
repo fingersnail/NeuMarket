@@ -6,8 +6,8 @@ import neuintership.market.ControlLayer 1.0
 
 Window {
     id: mainwindow
-    //width: 514
-    //height: 514
+//    width: 514
+//    height: 514
     width: 1214
     height: 814
     visible: true
@@ -29,9 +29,9 @@ Window {
             mainwindow.setX(mainwindow.x+delta.x)
             mainwindow.setY(mainwindow.y+delta.y)
         }
-        onClicked: {
-            function_panel.detail_panel.search_area.focus = false
-        }
+//        onClicked: {
+//            function_panel.detail_panel.search_area.focus = false
+//        }
     }
 
 

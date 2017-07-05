@@ -207,7 +207,7 @@ Rectangle {
                     "strokeColor": "rgba(151,187,205,1)",
                     "pointColor": "rgba(151,187,205,1)",
                     "pointStrokeColor": "#fff",
-                    "data": [65,59,90,81,56,55,80]
+                    "data": [65,59,9,81,56,55,800]
           }]
       }
 

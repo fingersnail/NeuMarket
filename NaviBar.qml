@@ -5,8 +5,6 @@ Rectangle {
     property int user_function;
     signal menu_clicked(int selected);
 
-    id: navi_bar
-
     property var buttons: new Array;
     property var areas: new Array(menu_area0, menu_area1, menu_area2,
                         menu_area3, menu_area4);

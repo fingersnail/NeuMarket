@@ -6,7 +6,8 @@ Rectangle {
     property date end_data;
     property real tableWidth: 80
     property real signleLineHeight:30
-    property int  c_index: 10
+    property int current_index: -1
+    property bool is_edit: true
     Row {
         x: 10
         y: 15
@@ -20,7 +21,7 @@ Rectangle {
         }
         MyTextField {
             height: 32
-            id: supplier_address
+            id: product_search_id
             font.pointSize: 12
             width: 180
         }
@@ -31,7 +32,7 @@ Rectangle {
             font.pointSize: 12
         }
         DatePicker {
-            height: supplier_address.height;
+            height: product_search_id.height;
             width: 180
             font.pointSize: 12
             z:4
@@ -44,7 +45,7 @@ Rectangle {
             font.pointSize: 12
         }
         DatePicker {
-            height: supplier_address.height;
+            height: product_search_id.height;
             width: 180
             z:3
             font.pointSize: 12
@@ -54,7 +55,7 @@ Rectangle {
 
         Rectangle {
             width: 80
-            height: supplier_address.height
+            height: product_search_id.height
             color: "#2d91ea"
             radius: 8
             Text {
@@ -67,13 +68,15 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onPressed: {
-                  parent.color = "#1785e6"
+                    parent.color = "#1785e6"
                 }
                 onReleased: {
-                  parent.color = "#2d91ea"
-                }
-                onClicked: {
-
+                    parent.color = "#2d91ea"
+                    if (product_search_id.text.trim() == "" || product_search_id.text.trim() == "-1")
+                        controller.getSaleRecords(from_data, end_data);
+                    else
+                        controller.getSaleRecords(product_search_id.text.trim(),
+                                                  from_data, end_data);
                 }
             }
         }
@@ -88,6 +91,9 @@ Rectangle {
 
         TableView
         {
+            property double var2;
+            property int var3;
+
             id:tableView
             z:1
             anchors.fill: parent
@@ -102,24 +108,26 @@ Rectangle {
                 id:tableModel
                 ListElement
                 {
-                    c_id:"1"
-                    time:"2017-01-01"
-                    item_id:"001"
-                    item_name:"泡面"
+                    c_id:1
+                    var4:"2017-01-01 12:12:12"
+                    var0:2345
+                    var1:"泡面"
+                    var2: 432.53
+                    var3: 5
                 }
                 ListElement
                 {
-                    c_id:"2"
-                    time:"2017-01-02"
-                    item_id:"002"
-                    item_name:"矿泉水"
+                    c_id:2
+                    var4:"2017-01-02"
+                    var0:534
+                    var1:"矿泉水"
                 }
                 ListElement
                 {
-                    c_id:"3"
-                    time:"2017-01-03"
-                    item_id:"003"
-                    item_name:"旺旺雪饼"
+                    c_id:3
+                    var4:"2017-01-03"
+                    var0:5423
+                    var1:"旺旺雪饼"
 
                 }
 
@@ -179,7 +187,7 @@ Rectangle {
             {
 
                 width: tableView.width*0.3
-                role:"time"
+                role:"var4"
                 title:"销售日期"
                 delegate:Rectangle
                 {
@@ -196,7 +204,7 @@ Rectangle {
             {
 
                 width: tableView.width*0.3
-                role:"item_id"
+                role:"var0"
                 title:"商品id"
                 delegate:Rectangle
                 {
@@ -213,7 +221,7 @@ Rectangle {
             {
 
                 width: tableView.width*0.3
-                role:"item_name"
+                role:"var1"
                 title:"商品名称"
                 delegate:Rectangle
                 {
@@ -227,12 +235,21 @@ Rectangle {
 
            }
 
+            onClicked:  {
+                current_index = row;
+                show_detail(row);
+            }
+
+            onDoubleClicked: {
+                current_index = row;
+                show_detail(row);
+            }
         }
     }
             Rectangle {
                 //add item
                 id: buttonrect_one
-                width:leftrect.width/2
+                width:leftrect.width
                 height:(parent.height-searchrect.height-25)*0.15
                 anchors.top:leftrect.bottom
 
@@ -254,48 +271,11 @@ Rectangle {
                         parent.color = 'transparent'
                     }
                     onClicked: {
-                        c_index++;
-                        tableView.model.append({ "c_id":c_index.toString(),
-                                                 "code":"09090",
-                                                 "name":"xiaoxiao"});
+                        clear_input_area();
                     }
                 }
             }
-            Rectangle
-            {
 
-                id:buttonrect_two
-                width:leftrect.width/2
-                height:buttonrect_one.height
-                anchors.left:buttonrect_one.right
-                anchors.top:leftrect.bottom
-                color: "transparent"
-                Image {
-                    width: 50
-                    height: 50
-                    anchors.centerIn: parent
-                    source: "pic/delete.png"
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered:{
-
-                        parent.color = Qt.rgba(220/225, 220/225, 220/225, 0.5);
-                    }
-                    onExited:{
-                        parent.color = 'transparent'
-                    }
-                    onClicked: {
-                        if(tableView.model.count > 0)
-                        {
-                            tableView.model.remove(0);
-                        }
-                    }
-                }
-
-
-            }
      Rectangle
      {
         id: rightrect
@@ -320,8 +300,17 @@ Rectangle {
                    MyTextField {
                        id:item_id
                        width: rightrect.width*0.6
-
-                    }
+                       onFocusChanged: {
+                           if (focus && is_edit && text != "")
+                               controller.getProductName(text);
+                       }
+                   }
+                   Text {
+                       id:item_id_text
+                       width: rightrect.width*0.6
+                       visible: false
+                       font.pointSize: 14
+                   }
               }
               Row {
                    Text {
@@ -330,7 +319,7 @@ Rectangle {
                     }
                     Text {
                        id:item_name
-                       text: "商品名称 "
+                       text: ""
                        font.pointSize: 14
                     }
               }
@@ -342,7 +331,13 @@ Rectangle {
                       MyTextField {
                           id:item_price
                           width: rightrect.width*0.6
-                       }
+                      }
+                      Text {
+                          id:item_price_text
+                          width: rightrect.width*0.6
+                          visible: false
+                          font.pointSize: 14
+                      }
                }
                Row {
                    Text {
@@ -353,34 +348,134 @@ Rectangle {
                        id:item_quantity
                        width: rightrect.width*0.6
                    }
+                   Text {
+                       id:item_quantity_text
+                       width: rightrect.width*0.6
+                       visible: false
+                       font.pointSize: 14
+                   }
                }
                 Row {
                         z:1
+                        id: sale_time_row
                      Text {
                           text: "销售时间："
                           font.pointSize: 14
                       }
-                      DatePicker {
-                          id:sale_time
-                          height:item_price.height
-                          width: rightrect.width*0.6
-                          font.pointSize: 12
-                          z:5
-                          dateValue: (new Date()).toLocaleString(Qt.locale(), "yyyy-MM-dd")
-                          onDateValueChanged: end_data = dateValue
-                      }
+                     Text {
+                        id: sale_time
+                        text: ""
+                        font.pointSize: 14
+                     }
                     }
               }
               SaveButton {
+                    id: save_btn
                     anchors.right:rightrect.right
                     anchors.rightMargin: 55
                     anchors.top:infolist.bottom
                     anchors.topMargin: 15
+                    onClicked: {
+                        if (current_index == -1) {
+                            add_sale_record();
+                        }
+                    }
                }
 
          }
 
     function active() {
         visible = true;
+        refresh_list();
+        clear_input_area();
+    }
+
+    function refresh_list() {
+        controller.getAllRecords();
+    }
+
+    function clear_input_area() {
+        is_edit = true;
+        current_index = -1;
+        item_id_text.visible = false;
+        item_id.visible = true;
+        item_id.text = "";
+        item_name.text = "";
+        item_price_text.visible = false;
+        item_price.visible = true;
+        item_price.text = "";
+        item_quantity_text.visible = false;
+        item_quantity.visible = true;
+        item_quantity.text = ""
+        sale_time_row.visible = false;
+        save_btn.visible = true;
+    }
+
+    function show_detail(index) {
+        is_edit = false;
+        item_id.visible = false;
+        item_id_text.visible = true;
+        item_id_text.text = tableModel.get(index).var0;
+        item_name.text = tableModel.get(index).var1;
+        item_price.visible = false;
+        item_price_text.visible = true;
+        item_price_text.text = tableModel.get(index).var2;
+        item_quantity.visible = false;
+        item_quantity_text.visible = true;
+        item_quantity_text.text = tableModel.get(index).var3;
+        sale_time_row.visible = true;
+        sale_time.text = tableModel.get(index).var4;
+        save_btn.visible = false;
+    }
+
+    function add_sale_record() {
+        controller.addSaleRecord([item_id.text,item_price.text,
+                            item_quantity.text]);
+    }
+
+    Connections {
+        target: controller
+        onAllSaleRecords: {
+            tableModel.clear();
+
+            for (var i = 0; i <theclassmodel.rowCount(); i++) {
+                tableModel.append({"c_id": i + 1, "var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                                 "var2":theclassmodel.rowColData(i,2), "var3":theclassmodel.rowColData(i,3),
+                                 "var4":theclassmodel.rowColData(i,4)})
+            }
+            current_index = -1;
+        }
+    }
+    Connections {
+        target: controller
+        onSaleRecordAdded:{
+            if(ok){
+                color_true.running = true;
+                refresh_list();
+            } else {
+                color_false.running = true;
+            }
+        }
+    }
+
+    Connections {
+        target: controller
+        onProductName:{
+            item_name.text = name;
+        }
+    }
+
+    Connections {
+        target: controller
+        onSaleRecords: {
+            tableModel.clear();
+
+            for (var i = 0; i <theclassmodel.rowCount(); i++) {
+                tableModel.append({"c_id": i + 1, "var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                                 "var2":theclassmodel.rowColData(i,2), "var3":theclassmodel.rowColData(i,3),
+                                 "var4":theclassmodel.rowColData(i,4)})
+            }
+            current_index = -1;
+        }
     }
 }

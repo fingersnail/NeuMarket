@@ -9,14 +9,19 @@ Rectangle {
     property alias tableView: tableView
     property real tableWidth: 80
     property real singleLineHeight:25
+    property int current_index: -1
 
     Rectangle {
         id:leftrect
         width:parent.width*0.55
         height:parent.height*0.85
 
-        TableView
-        {
+        TableView {
+            property string var2;
+            property double var4;
+            property string var5;
+            property string var6;
+
             id:tableView
             anchors.fill: parent
             model:tableModel
@@ -30,24 +35,25 @@ Rectangle {
                 id:tableModel
                 ListElement
                 {
-                    product_id:"104341"
-                    product_name:"三等奖方块"
-                    finish: true
-                    repertory_number: "10"
+                    var0:104341
+                    var1:"三等奖方块"
+                    var2:"食品"
+                    var3: 10
+                    var4: 3.43
+                    var5: "haha"
+                    var6: "pic/bilibili.png"
                 }
                 ListElement
                 {
-                    product_id:"104346"
-                    product_name:"迪克曼"
-                    finish: true
-                    repertory_number: "100"
+                    var0:104346
+                    var1:"迪克曼"
+                    var3: 100
                 }
                 ListElement
                 {
-                    product_id:"104348"
-                    product_name:"付款进度"
-                    finish: true
-                    repertory_number: "1000"
+                    var0:104348
+                    var1:"付款进度"
+                    var3: 1000
                 }
             }
             //定义表头格式
@@ -79,7 +85,7 @@ Rectangle {
             {
 
                 width: tableView.width*0.4
-                role:"product_id"
+                role:"var0"
                 title:"商品id"
                 delegate:Rectangle
                 {
@@ -96,7 +102,7 @@ Rectangle {
             {
 
                 width: tableView.width*0.4
-                role:"product_name"
+                role:"var1"
                 title:"商品名称"
                 delegate:Rectangle
                 {
@@ -110,7 +116,7 @@ Rectangle {
             }
             TableViewColumn {
                 width: tableView.width*0.2
-                role:"repertory_number"
+                role:"var3"
                 title:"库存数"
                 delegate:Rectangle {
                     color:"transparent"
@@ -122,6 +128,15 @@ Rectangle {
                  }
             }
 
+            onClicked:  {
+                current_index = row;
+                show_detail(row);
+            }
+
+            onDoubleClicked: {
+                current_index = row;
+                show_detail(row);
+            }
         }
     }
 
@@ -149,11 +164,8 @@ Rectangle {
         onExited:{
             parent.color = 'transparent'
         }
-        onClicked: {
-//            c_index++;
-//            tableView.model.append({ "c_id":c_index.toString(),
-//                                     "code":"09090",
-//                                     "name":"xiaoxiao"});
+        onReleased: {
+            clear_input_area();
         }
     }
 }
@@ -176,14 +188,14 @@ Rectangle
         anchors.fill: parent
         hoverEnabled: true
         onEntered:{
-
             parent.color = Qt.rgba(220/225, 220/225, 220/225, 0.5);
         }
         onExited:{
             parent.color = 'transparent'
         }
         onClicked: {
-            message_dialog.open();
+            if (current_index >= 0)
+                message_dialog.open();
         }
     }
 }
@@ -192,12 +204,11 @@ property int input_width: 250
 Column {
     x: 560
     y: 30
-//        height: parent.height - 100
-//        width: 420
+
     spacing: 20
 
     Image {
-        id: supplier_pic
+        id: product_pic
         height: 100
         width: 100
         source: "pic/click.png"
@@ -210,6 +221,7 @@ Column {
         }
     }
     Row {
+        id: product_row
         Text {
             width: max_length_text.width
             text: "商品id:"
@@ -241,9 +253,10 @@ Column {
         }
 
         ComboBox{
+            id: product_cat
             width: input_width
             height: 40;
-            model: ["食品","饮品","日用品","文具","服饰","体育用品","其它"]
+            model: ["食品","饮品","日常用品","文具","服饰","体育用品","其它"]
         }
     }
     Row {
@@ -286,7 +299,13 @@ Column {
         anchors.right: parent.right
         spacing: 30
         SaveButton {
-
+            onClicked: {
+                if (current_index == -1) {
+                    add_product();
+                } else {
+                    save_product();
+                }
+            }
         }
     }
 }
@@ -296,9 +315,10 @@ MessageDialog{
   standardButtons: StandardButton.Yes | StandardButton.No
   modality: Qt.ApplicationModal
   title: "删除"
-  text:"你确定要删除该计划吗？"
+  text:"你确定要删除该商品吗？"
   onYes: {
-
+      delete_row = current_index;
+      controller.deleteProduct(tableModel.get(current_index).var0);
   }
 }
 
@@ -309,22 +329,105 @@ FileDialog {
             "Image Files (*.jpg *.png *.gif *.bmp *.ico)",
         ];
     onAccepted: {
-        supplier_pic.source = fileUrl;
+        product_pic.source = fileUrl;
         //var filepath = new String(fileUrl);
     }
 }
 
 function active() {
     visible = true;
+    refresh_list();
+    clear_input_area();
 }
 
-//function refresh_list() {
+function refresh_list() {
+    controller.getAllProducts();
+}
 
-//}
+function clear_input_area() {
+    current_index = -1;
+    product_row.visible = false;
+    product_name.text = "";
+    product_num.text = "";
+    product_price.text = "";
+    additional_info.text = "";
+    product_pic.source = "pic/click.png";
+}
 
-//function change_detail_supplier(index) {
+function show_detail(index) {
+    product_row.visible = true;
+    product_id.text = tableModel.get(index).var0;
+    product_name.text = tableModel.get(index).var1;
+    product_cat.currentIndex = product_cat.find(tableModel.get(index).var2);
+    product_num.text = tableModel.get(index).var3;
+    product_price.text = tableModel.get(index).var4;
+    additional_info.text = tableModel.get(index).var5;
+    product_pic.source = tableModel.get(index).var6;
+}
 
-//}
+function save_product() {
+    controller.saveProduct([tableModel.get(current_index).var0,product_name.text,
+                         product_cat.currentText,product_num.text,
+                         product_price.text, additional_info.text,
+                         product_pic.source]);
+}
 
+function add_product() {
+    controller.addProduct([product_name.text, product_cat.currentText,
+                       product_num.text, product_price.text,
+                       additional_info.text, product_pic.source]);
+}
+
+Connections {
+    target: controller
+    onAllProducts: {
+        tableModel.clear();
+
+        for (var i = 0; i <theclassmodel.rowCount(); i++) {
+            tableModel.append({"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                             "var2":theclassmodel.rowColData(i,2), "var3":theclassmodel.rowColData(i,3),
+                             "var4":theclassmodel.rowColData(i,4),"var5":theclassmodel.rowColData(i,5),
+                             "var6":theclassmodel.rowColData(i,6)})
+        }
+        current_index = -1;
+    }
+}
+
+Connections {
+    target: controller
+    onProductSaved:{
+        if(ok){
+            color_true.running = true;
+            refresh_list();
+        } else {
+            color_false.running = true;
+        }
+    }
+}
+
+property int delete_row: -1;
+Connections {
+    target: controller
+    onProductDeleted:{
+        if(ok){
+            tableModel.remove(delete_row);
+            clear_input_area();
+            color_true.running = true;
+        } else {
+            color_false.running = true;
+        }
+    }
+}
+Connections {
+    target: controller
+    onProductAdded:{
+        if(ok){
+            color_true.running = true;
+            refresh_list();
+        } else {
+            color_false.running = true;
+        }
+    }
+}
 
 }

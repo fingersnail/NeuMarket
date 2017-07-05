@@ -30,11 +30,13 @@ Rectangle{
             ListModel
             {
                 //var0 user_id, var1 user_name, var2 tel,
-                //var3 address, var4 authority
+                //var3 address, var4 authority, var5 email, var6 sex
 
                 property string var2;
                 property string var3;
                 property int var4;
+                property string var5;
+                property bool var6;
 
                 id:tableModel
                 ListElement {
@@ -44,6 +46,8 @@ Rectangle{
                     var2:"14522231321"
                     var3:"iu"
                     var4:31
+                    var5: "a@1"
+                    var6: true
                 }
                 ListElement {
                     c_id:"2"
@@ -52,6 +56,8 @@ Rectangle{
                     var2:"14522231321"
                     var3:"iu"
                     var4:31
+                    var5: "a@1"
+                    var6: true
                 }
                 ListElement {
                     c_id:"3"
@@ -60,6 +66,8 @@ Rectangle{
                     var2:"14522231321"
                     var3:"iu"
                     var4:15
+                    var5: "a@1"
+                    var6: true
                 }
 
             }
@@ -215,10 +223,8 @@ Rectangle
             parent.color = 'transparent'
         }
         onClicked: {
-            onClicked: {
-                if (current_index >= 0)
-                    message_dialog.open();
-            }
+            if (current_index >= 0)
+                message_dialog.open();
         }
     }
 
@@ -262,6 +268,27 @@ Rectangle
 
             }
         }
+        Row{
+            spacing: 20
+            Text {
+                text: "性别：    "
+                font.pointSize: 14
+            }
+            ExclusiveGroup{
+                id:sex_group
+            }
+
+            MyRadioButton{
+                id: man_check
+                text:"男"
+                exclusiveGroup: sex_group
+            }
+            MyRadioButton{
+                id: woman_check
+                text:"女"
+                exclusiveGroup: sex_group
+            }
+        }
         Row {
 
             Text {
@@ -285,7 +312,16 @@ Rectangle
 
                 }
             }
-
+        Row {
+            Text {
+                text: "email：   "
+                font.pointSize: 14
+            }
+            MyTextField {
+                id: person_email
+                width: mainrect.width*0.3
+                }
+        }
         Row {
             Text {
                 text: "权限：    "
@@ -369,6 +405,7 @@ Rectangle
         person_name.text = "";
         person_tel.text = "";
         person_address.text = ""
+        person_email.text = "";
 
         authority1.checked = false;
         authority2.checked = false;
@@ -382,6 +419,7 @@ Rectangle
         person_name.text = tableModel.get(index).var1;
         person_tel.text = tableModel.get(index).var2;
         person_address.text = tableModel.get(index).var3;
+        person_email.text = tableModel.get(index).var5;
 
         var auth = authorityPaser(tableModel.get(index).var4);
         if(auth[0])
@@ -404,6 +442,15 @@ Rectangle
             authority5.checked = true;
         else
             authority5.checked = false;
+
+        if (tableModel.get(index).var6) {
+            woman_check.checked = false;
+            man_check.checked = true;
+        }
+        else {
+            man_check.checked = false;
+            woman_check.checked = true;
+        }
     }
 
     function authorityPaser(level) {
@@ -447,12 +494,14 @@ Rectangle
     function save_user() {
         controller.saveUser([tableModel.get(current_index).var0,person_name.text,
                              person_tel.text,person_address.text,
-                             getAuthorityNum()]);
+                             getAuthorityNum(), person_email.text,
+                             man_check.checked]);
     }
 
     function add_user() {
         controller.addUser([person_name.text,person_tel.text,
-                            person_address.text,getAuthorityNum()]);
+                            person_address.text,getAuthorityNum(),
+                            person_email.text, man_check.checked]);
     }
 
     Connections {
@@ -461,9 +510,10 @@ Rectangle
             tableModel.clear();
 
             for (var i = 0; i <theclassmodel.rowCount(); i++) {
-                tableModel.append({"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                tableModel.append({"c_id": i + 1,"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
                                  "var2":theclassmodel.rowColData(i,2), "var3":theclassmodel.rowColData(i,3),
-                                 "var4":theclassmodel.rowColData(i,4)})
+                                 "var4":theclassmodel.rowColData(i,4), "var5":theclassmodel.rowColData(i,5),
+                                 "var6":theclassmodel.rowColData(i,6)})
             }
             current_index = -1;
         }

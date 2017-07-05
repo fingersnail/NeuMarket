@@ -20,11 +20,12 @@ Rectangle{
 
         TableView {
             //var0 user_id, var1 user_name, var2 tel,
-            //var3 address, var4 isPosition, var5 authority
+            //var3 address, var4 isPosition, var5 email, var6 sex
 
             property string var2;
             property string var3;
-            property int var5;
+            property string var5;
+            property bool var6;
 
             id:tableView
             anchors.fill: parent
@@ -36,33 +37,6 @@ Rectangle{
             signal signalShowMenu(var id,int x,int y)
             ListModel {
                 id:tableModel
-                ListElement {
-                    c_id:"1"
-                    var0:"101"
-                    var1:"xiaoli"
-                    var2:"14522231321"
-                    var3:"iu"
-                    var4:true
-                    var5: 31
-                }
-                ListElement {
-                    c_id:"2"
-                    var0:"102"
-                    var1:"xiaoming"
-                    var2:"14522231321"
-                    var3:"iu"
-                    var4:false
-                    var5: 31
-                }
-                ListElement {
-                    c_id:"3"
-                    var0:"103"
-                    var1:"xiaoing"
-                    var2:"14522231321"
-                    var3:"iu"
-                    var4:false
-                    var5: 15
-                }
             }
             //定义表头格式
             Component{
@@ -266,14 +240,15 @@ Rectangle
         anchors.left:parent.left
         anchors.leftMargin: 40
         Row {
+            id: person_id_row
             Text {
                 text: "用户id：  "
                 font.pointSize: 14
             }
-            MyTextField {
+            Text {
                 id: person_id
                 width: mainrect.width*0.3
-
+                font.pointSize: 14
             }
         }
         Row {
@@ -284,6 +259,27 @@ Rectangle
             MyTextField {
                 id: person_name
                 width: mainrect.width*0.3
+            }
+        }
+        Row{
+            spacing: 20
+            Text {
+                text: "性别：    "
+                font.pointSize: 14
+            }
+            ExclusiveGroup{
+                id:sex_group
+            }
+
+            MyRadioButton{
+                id: man_check
+                text:"男"
+                exclusiveGroup: sex_group
+            }
+            MyRadioButton{
+                id: woman_check
+                text:"女"
+                exclusiveGroup: sex_group
             }
         }
         Row {
@@ -308,8 +304,17 @@ Rectangle
                 width: mainrect.width*0.3
 
                 }
+        }
+        Row {
+            Text {
+                text: "email：   "
+                font.pointSize: 14
             }
-
+            MyTextField {
+                id: person_email
+                width: mainrect.width*0.3
+                }
+        }
         Row{
             spacing: 20
             Text {
@@ -324,52 +329,13 @@ Rectangle
                 id: in_check
                 text:"在职"
                 exclusiveGroup: state_group
-                checked: styleData.value === "在职" ? true :false
                 }
             MyRadioButton{
                 id: out_check
                 text:"不在职"
                 exclusiveGroup: state_group
-                checked: styleData.value === "不在职" ? true :false
                 }
             }
-        Row{
-            Text {
-            text: "权限：    "
-            font.pointSize: 14
-            }
-             Grid{
-                rows:2
-                columns:3
-                columnSpacing: 3
-                rowSpacing: 15
-                MyCheckBox {
-                    id: authority1
-                    text: qsTr("人事管理")
-                    width:90
-                }
-                MyCheckBox {
-                    id: authority2
-                    text: qsTr("销售管理")
-                    width:90
-                }
-                MyCheckBox {
-                    id: authority3
-                    text: qsTr("进货管理")
-                    width:90
-                }
-                MyCheckBox {
-                    id: authority4
-                    text: qsTr("库存管理")
-                    width:90
-                }
-                MyCheckBox {
-                    id: authority5
-                    text: qsTr("系统管理")
-                    width:90
-                }
-             }
-         }
      }
         SaveButton {
             anchors.right:rightrect.right
@@ -410,26 +376,24 @@ Rectangle
     }
 
     function clear_input_area() {
+        person_id_row.visible = false;
         current_index = -1;
         person_id.text = "";
         person_name.text = "";
         person_tel.text = "";
-        person_address.text = ""
+        person_address.text = "";
+        person_email.text = "";
         in_check.checked = true;
         out_check.checked = false;
-
-        authority1.checked = false;
-        authority2.checked = false;
-        authority3.checked = false;
-        authority4.checked = false;
-        authority5.checked = false;
     }
 
     function show_detail(index) {
+        person_id_row.visible = true;
         person_id.text = tableModel.get(index).var0;
         person_name.text = tableModel.get(index).var1;
         person_tel.text = tableModel.get(index).var2;
         person_address.text = tableModel.get(index).var3;
+        person_email.text = tableModel.get(index).var5;
 
         if (tableModel.get(index).var4) {
             out_check.checked = false;
@@ -440,77 +404,28 @@ Rectangle
             out_check.checked = true;
         }
 
-        var auth = authorityPaser(tableModel.get(index).var5);
-        if(auth[0])
-            authority1.checked = true;
-        else
-            authority1.checked = false;
-        if(auth[1])
-            authority2.checked = true;
-        else
-            authority2.checked = false;
-        if(auth[2])
-            authority3.checked = true;
-        else
-            authority3.checked = false;
-        if(auth[3])
-            authority4.checked = true;
-        else
-            authority4.checked = false;
-        if(auth[4])
-            authority5.checked = true;
-        else
-            authority5.checked = false;
+        if (tableModel.get(index).var6) {
+            woman_check.checked = false;
+            man_check.checked = true;
+        }
+        else {
+            man_check.checked = false;
+            woman_check.checked = true;
+        }
     }
 
-    function authorityPaser(level) {
-        var authority = [];
-        if (level % 2 == 1)
-            authority[0] = true;
-        level = parseInt(level / 2);
-        if (level % 2 == 1)
-            authority[1] = true;
-        level = parseInt(level / 2);
-        if (level % 2 == 1)
-            authority[2] = true;
-        level = parseInt(level / 2);
-        if (level % 2 == 1)
-            authority[3] = true;
-        level = parseInt(level / 2);
-        if (level % 2 == 1)
-            authority[4] = true;
-        return authority;
-    }
-
-    function getAuthorityNum() {
-        var num = 0;
-        if (authority5.checked)
-            num += 1;
-        num *=2;
-        if (authority4.checked)
-            num += 1;
-        num *=2;
-        if (authority3.checked)
-            num += 1;
-        num *=2;
-        if (authority2.checked)
-            num += 1;
-        num *=2;
-        if (authority1.checked)
-            num += 1;
-        return num;
-    }
-
-    function save_worekr() {
+    function save_worker() {
         controller.saveWorker([tableModel.get(current_index).var0,person_name.text,
                              person_tel.text,person_address.text,
-                             in_check.checked, getAuthorityNum()]);
+                             in_check.checked, person_email.text,
+                              man_check.checked]);
     }
 
     function add_worker() {
         controller.addWorker([person_name.text,
                             person_tel.text,person_address.text,
-                            in_check.checked,getAuthorityNum()]);
+                            in_check.checked, person_email.text,
+                            man_check.checked]);
     }
 
     Connections {
@@ -519,10 +434,10 @@ Rectangle
             tableModel.clear();
 
             for (var i = 0; i <theclassmodel.rowCount(); i++) {
-                tableModel.append({"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                tableModel.append({"c_id": i + 1,"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
                                  "var2":theclassmodel.rowColData(i,2), "var3":theclassmodel.rowColData(i,3),
-                                 "var4":theclassmodel.rowColData(i,4),
-                                 "var5":theclassmodel.rowColData(i,5)})
+                                 "var4":theclassmodel.rowColData(i,4),"var5":theclassmodel.rowColData(i,5),
+                                 "var6":theclassmodel.rowColData(i,6)})
             }
             current_index = -1;
         }

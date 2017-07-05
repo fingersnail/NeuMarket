@@ -283,7 +283,9 @@ Rectangle {
             ];
         onAccepted: {
             supplier_pic.source = fileUrl;
-            //var filepath = new String(fileUrl);
+            var filepath = new String(fileUrl);
+            console.log(fileUrl);
+            console.log(filepath);
         }
     }
 
@@ -339,7 +341,6 @@ Rectangle {
                                  "var4":theclassmodel.rowColData(i,4), "var5":theclassmodel.rowColData(i,5)})
             }
             current_index = -1;
-            console.log("ononon");
         }
     }
     Connections {
@@ -347,6 +348,7 @@ Rectangle {
         onSupplierSaved:{
             if(ok){
                 color_true.running = true;
+                refresh_list();
             } else {
                 color_false.running = true;
             }

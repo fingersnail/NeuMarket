@@ -184,6 +184,7 @@ Rectangle {
                 mainwindow.width = function_panel.width + 14;
                 mainwindow.height = function_panel.height + 14;
                 function_panel.visible = true;
+                function_panel.user_function = workertype;
                 break;
             case ControlLayer.INVALID_INPUT:
                 login_text.text = "输入不合法";

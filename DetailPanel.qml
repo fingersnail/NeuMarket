@@ -26,6 +26,20 @@ Item {
         }
     }
 
+    Connections {
+        target:color_pick_panel
+        onBecomeTransparent: {
+            content_panel.color =  Qt.rgba(1,1,1,0);
+        }
+    }
+
+    Connections {
+        target:color_pick_panel
+        onColorChange: {
+            content_panel.color =  Qt.rgba(1,1,1,0.8);
+        }
+    }
+
     Rectangle {
         x: 0
         y: 50

@@ -86,6 +86,8 @@ Rectangle {
 //    }
 
     function refresh_bar_chart(cat, amount) {
+        chartBarData.labels = [];
+        chartBarData.datasets[0].data = [];
         for (var i in cat) {
             chartBarData.labels[i] = cat[i];
             chartBarData.datasets[0].data[i] = amount[i];

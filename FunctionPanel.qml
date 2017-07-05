@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Rectangle {
-    property  alias detail_panel: detail_panel
+    property int user_function: navi_bar.user_function
 
     ShadowRactangle{
         anchors.fill: parent
@@ -25,6 +25,7 @@ Rectangle {
     }
 
     NaviBar {
+        id: navi_bar
         color: 'transparent'
         x:30
         y:80

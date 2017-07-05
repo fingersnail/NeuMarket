@@ -242,7 +242,7 @@ Rectangle
             tableModel.clear();
 
             for (var i = 0; i <theclassmodel.rowCount(); i++) {
-                tableModel.append({"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
+                tableModel.append({"c_id": i + 1,"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
                                  "var2":theclassmodel.rowColData(i,2)})
             }
             current_index = -1;
