@@ -26,27 +26,28 @@ Rectangle{
             rowDelegate:rowDele
             backgroundVisible:false
             clip: true
+            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
             signal signalShowMenu(var id,int x,int y)
             ListModel
             {
                 id:tableModel
                 ListElement
                 {
-                    c_id:"1"
+                    c_id:1
                     var0:101
                     var1:"xiaoli"
                     var2: "231ju"
                 }
                 ListElement
                 {
-                    c_id:"2"
+                    c_id:2
                     var0:102
                     var1:"xiaoming"
                     var2: "231ju"
                 }
                 ListElement
                 {
-                    c_id:"3"
+                    c_id:3
                     var0:103
                     var1:"xiaotong"
                     var2: "231ju"
@@ -172,10 +173,10 @@ Rectangle
                 text: "用户id：  "
                 font.pointSize: 14
             }
-            MyTextField {
+            Text {
                 id: person_id
                 width: mainrect.width*0.3
-
+                font.pointSize: 20
             }
         }
         Row {
@@ -183,11 +184,12 @@ Rectangle
                 text: "姓名：    "
                 font.pointSize: 14
             }
-            MyTextField {
+            Text {
                 id: person_name
                 width: mainrect.width*0.3
-
+                font.pointSize: 20
             }
+
         }
         Row {
             Text {
@@ -225,6 +227,12 @@ Rectangle
         controller.getStuffMainInfo();
     }
 
+    function clear_input_area() {
+        person_id.text = "";
+        person_name.text = "";
+        person_password.text = "";
+    }
+
     function show_detail(index) {
         person_id.text = tableModel.get(index).var0;
         person_name.text = tableModel.get(index).var1;
@@ -232,7 +240,7 @@ Rectangle
     }
 
     function save_user() {
-        controller.addUser([person_id.text,person_name.text,
+        controller.saveStuffMainInfo([person_id.text,
                             person_password.text]);
     }
 

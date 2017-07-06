@@ -103,23 +103,24 @@ Rectangle {
 
                 model: ListModel {
                     id: listModel
-//                    ListElement {
-//                        var0: "哔哩哔哩鸭脖公司"; var1: "12345678 ;"; var2: "`"; var3: "123";}
-//                    ListElement {var3: 123; var2: "pic/panegg.png";
-//                        var0: "煎蛋熟食"; var1: "12345678"}
-//                    ListElement {var3: 123;var2: "pic/penguin.png";
-//                        var0: "企鹅绒服饰"; var1: "12345678"}
-//                    ListElement {var3: 123;var2: "pic/instantnoodles.png";
-//                        var0: "一根方便面"; var1: "12345678"}
-//                    ListElement {var3: 123;var2: "pic/tao.png";
-//                        var0: "淘宝百货"; var1: "12345678"}
-//                    ListElement {var3: 123;var2: "pic/squirrel.png";
-//                        var0: "松鼠坚果"; var1: "12345678"}
-//                    ListElement {var3: 123;var2: "pic/realmadrid.png";
-//                        var0: "巴萨体育用品公司"; var1: "12345678"}
-//                    ListElement {var3: 123;var2: "pic/59Pen.png";
-//                        var0: "59文具"; var1: "12345678"
-//                    }
+                    ListElement {
+                        var0: "哔哩哔哩鸭脖公司"; var1: "12345678"; var2: "pic/bilibili.png"; var3: "123";}
+                    ListElement {var3: 123; var2: "pic/panegg.png";
+                        var0: "煎蛋熟食"; var1: "12345678"}
+                    ListElement {var3: 123;var2: "pic/penguin.png";
+                        var0: "企鹅绒服饰"; var1: "12345678"}
+                    ListElement {var3: 123;var2: "pic/instantnoodles.png";
+                        var0: "一根方便面"; var1: "12345678"; var4: "大平路";
+                        var5: "就不是这个味"}
+                    ListElement {var3: 123;var2: "pic/tao.png";
+                        var0: "淘宝百货"; var1: "12345678"}
+                    ListElement {var3: 123;var2: "pic/squirrel.png";
+                        var0: "松鼠坚果"; var1: "12345678"}
+                    ListElement {var3: 123;var2: "pic/realmadrid.png";
+                        var0: "巴萨体育用品公司"; var1: "12345678"}
+                    ListElement {var3: 123;var2: "pic/59Pen.png";
+                        var0: "59文具"; var1: "12345678"
+                    }
                 }
             }
         }

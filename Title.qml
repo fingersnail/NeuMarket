@@ -24,12 +24,14 @@ Rectangle {
             color_pick_panel.visible = true;
         }
     }
-    Text {
-        x: 10
-        y: 5
-        text: "超市管理系统"
-        font.pointSize: 15
-        color: 'white'
+
+    Image{
+        x:10
+        y:0
+        id:shop_icon
+        width:sourceSize.width*0.9
+        height:sourceSize.height*0.8
+        source:"pic/titleicon.png"
     }
 }
 

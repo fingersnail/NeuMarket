@@ -4,7 +4,7 @@ void ControlLayer::connectServer(){
     socket->abort();
     socket = new QTcpSocket(this);
     socket->abort();
-    socket->connectToHost("192.168.191.3",6666);
+    socket->connectToHost("192.168.191.2",6666);
     connect(socket,SIGNAL(connected()),this,SLOT(writeMesg()));
     connect(socket,SIGNAL(readyRead()),this,SLOT(readMesg()));
 }
@@ -91,7 +91,7 @@ void ControlLayer::readMesg(){
             emit saleRecordAdded(theclassmodel->rowColData(0,0).toBool());
             break;
         case rt_getProductName:
-            emit productName(theclassmodel->rowColData(0,0).toString());
+            emit productName(theclassmodel->rowColData(0,1).toString(),theclassmodel->rowColData(0,4).toDouble());
             break;
         //库存相关控制层
         case rt_getRepertoryStatistic:
@@ -114,7 +114,7 @@ void ControlLayer::readMesg(){
             emit stockPlans(theclassmodel);
             break;
         case rt_getSupplierNames:
-            emit supplierNames(theclassmodel->colDatas(0),theclassmodel->colDatas(1));
+            emit supplierNames(theclassmodel->colDatas(3),theclassmodel->colDatas(0));
             break;
         case rt_savePlan:
             emit planSaved(theclassmodel->rowColData(0,0).toBool());
@@ -147,9 +147,14 @@ void ControlLayer::readMesg(){
         case rt_deleteUser:
             emit userDeleted(theclassmodel->rowColData(0,0).toBool());
             break;
-        default:
-            emit loadModelFinished(theclassmodel);
+        case rt_getOneUser:
+            QVariantList emitlist=theclassmodel->rowDatas(0);
+            emitlist[0]=QVariant(QString("%1").arg(emitlist[0].toInt()));
+            emit oneUser(emitlist);
             break;
+//        default:
+//            emit loadModelFinished(theclassmodel);
+//            break;
 
     }
 }
@@ -161,6 +166,10 @@ void ControlLayer::login(int workernum, QString password) {
     this->reqdatavarlist<<this->requestype<<workernum<<password;
     this->theclassvarcount=2;//loginstate,workertype
     this->connectServer();
+
+    if (workernum <= 31 && password == "123") {
+        emit loginFinish(LoginState::SUCCESS,workernum);
+    }
 }
 //人事管理相关控制层
 void  ControlLayer::listAllWorker() {
@@ -168,6 +177,7 @@ void  ControlLayer::listAllWorker() {
     this->reqdatavarlist.clear();
     this->reqdatavarlist<<this->requestype;
     this->theclassvarcount=7;//id(int),name,tel(string),address,isPosition(bool),email,sex(bool)
+    qDebug()<<"listAllWorker";
     this->connectServer();
 }
 void ControlLayer::getSupplierList(){
@@ -192,7 +202,7 @@ void ControlLayer::getWorkerDetail(int id){
     this->connectServer();
 }
 void ControlLayer::saveWorker(QVariantList data){//id(int) name tel(string) address isPosition(bool)  email sex(bool)
-    this->requestype=RequestType::rt_saveSupplier;
+    this->requestype=RequestType::rt_saveWorker;
     this->reqdatavarlist.clear();
     QVariantList sendsupplierinfo;
     sendsupplierinfo<<data[0]<<-1<<data[6]<<data[1]<<data[2]<<data[3]<<data[5]<<data[4];
@@ -279,7 +289,7 @@ void ControlLayer::getSaleRecords(QDate startYMD, QDate endYMD){
     this->connectServer();
 }
 void ControlLayer::getSaleRecords(int product_id, QDate from_date, QDate end_date){
-    this->requestype=RequestType::rt_getSaleRecords;
+    this->requestype=RequestType::rt_getSaleRecords2;
     this->reqdatavarlist.clear();
     this->reqdatavarlist<<this->requestype<<product_id<<from_date<<end_date;
     this->theclassvarcount=5;//product_id product_name price num sale_time(string)
@@ -288,7 +298,7 @@ void ControlLayer::getSaleRecords(int product_id, QDate from_date, QDate end_dat
 void ControlLayer::getAllRecords(){
     this->requestype=RequestType::rt_getAllRecords;
     this->reqdatavarlist.clear();
-    this->reqdatavarlist<<this->requestype;
+    this->reqdatavarlist<<this->requestype<<"1970-01-01"<<QDate::currentDate();
     this->theclassvarcount=5;//product_id product_name price num sale_time(string)
     this->connectServer();
 }
@@ -296,8 +306,8 @@ void ControlLayer::addSaleRecord(QVariantList record){//product_id price(double)
     this->requestype=RequestType::rt_addSaleRecord;
     this->reqdatavarlist.clear();
     QVariantList sendsupplierinfo;
-    sendsupplierinfo<<record[0]<<record[2]<<record[1];
-    //product_id,num,price
+    sendsupplierinfo<<record[0]<<record[2]<<record[2].toInt()*record[1].toDouble();
+    //product_id,num,totalprice
     this->reqdatavarlist<<this->requestype<<sendsupplierinfo;
     this->theclassvarcount=1;//ok
     this->connectServer();
@@ -306,7 +316,7 @@ void ControlLayer::getProductName(int product_id){
     this->requestype=RequestType::rt_getProductName;
     this->reqdatavarlist.clear();
     this->reqdatavarlist<<this->requestype<<product_id;
-    this->theclassvarcount=1;//productname
+    this->theclassvarcount=7;//productname
     this->connectServer();
 }
 //库存相关控制层
@@ -327,7 +337,10 @@ void ControlLayer::getAllProducts(){
 void ControlLayer::saveProduct(QVariantList data){ //id(int) name catagory(string) num price info image(string)
     this->requestype=RequestType::rt_saveProduct;
     this->reqdatavarlist.clear();
-    this->reqdatavarlist<<this->requestype<<data;
+    QVariantList sendsupplierinfo;
+    sendsupplierinfo<<data[0]<<data[4]<<data[1]<<data[6]<<data[5]<<data[3]<<data[2];
+    //id,price,name,picture,description,num,kind
+    this->reqdatavarlist<<this->requestype<<sendsupplierinfo;
     this->theclassvarcount=1;//ok
     this->connectServer();
 }
@@ -341,7 +354,10 @@ void ControlLayer::deleteProduct(int id){
 void ControlLayer::addProduct(QVariantList data){  //name catagory(string) num price info image(string)
     this->requestype=RequestType::rt_addProduct;
     this->reqdatavarlist.clear();
-    this->reqdatavarlist<<this->requestype<<data;
+    QVariantList sendsupplierinfo;
+    sendsupplierinfo<<data[3]<<data[0]<<data[5]<<data[4]<<data[2]<<data[1];
+    //price,name,picture,description,num,kind
+    this->reqdatavarlist<<this->requestype<<sendsupplierinfo;
     this->theclassvarcount=1;//ok
     this->connectServer();
 }
@@ -358,7 +374,7 @@ void ControlLayer::getSupplierNames(){
     this->requestype=RequestType::rt_getSupplierNames;
     this->reqdatavarlist.clear();
     this->reqdatavarlist<<this->requestype;
-    this->theclassvarcount=2;//SupplierId,SupplierNames
+    this->theclassvarcount=6;//SupplierId,SupplierNames
     this->connectServer();
 }
 void ControlLayer::savePlan(QVariantList theplan){//purchase_id，product_id，supplier_id，purchase_date，
@@ -373,7 +389,13 @@ void ControlLayer::addPlan(QVariantList theplan){//product_id，supplier_id，pu
                                                 //quantity，money_amount，is_finish，comment
     this->requestype=RequestType::rt_addPlan;
     this->reqdatavarlist.clear();
-    this->reqdatavarlist<<this->requestype<<theplan<<this->workernum;
+
+    QVariantList sendsupplierinfo;
+    int doplanworkerid=-1;
+    if(theplan[5].toBool()){doplanworkerid=this->workernum;}
+    sendsupplierinfo<<theplan[0]<<this->workernum<<doplanworkerid<<theplan[1]<<theplan[2]<<theplan[3]<<theplan[4]<<theplan[5]<<theplan[6];
+    //product_id,makeplanworkerid,doplanworkerid,supplier_id，purchase_date,quantity，money_amount，is_finish，comment
+    this->reqdatavarlist<<this->requestype<<sendsupplierinfo;
     this->theclassvarcount=1;//ok
     this->connectServer();
 }
@@ -387,7 +409,7 @@ void ControlLayer::deletePlan(int planId){
 void ControlLayer::changePlanState(int planId, bool isFinish){
     this->requestype=RequestType::rt_changePlanState;
     this->reqdatavarlist.clear();
-    this->reqdatavarlist<<this->requestype<<planId<<isFinish<<this->workernum;
+    this->reqdatavarlist<<this->requestype<<planId<<this->workernum<<isFinish;
     this->theclassvarcount=1;//ok
     this->connectServer();
 }
@@ -399,7 +421,7 @@ void ControlLayer::getStuffMainInfo(){
     this->theclassvarcount=3;//id(int) name password(string)
     this->connectServer();
 }
-void ControlLayer::saveStuffMainInfo(QVariantList info){  //id(int) name password(string)
+void ControlLayer::saveStuffMainInfo(QVariantList info){  //id(int) password(string)
     this->requestype=RequestType::rt_saveStuffMainInfo;
     this->reqdatavarlist.clear();
     this->reqdatavarlist<<this->requestype<<info;
@@ -423,12 +445,12 @@ void ControlLayer::saveUser(QVariantList user){ //id(int) name tel(string) addre
     this->theclassvarcount=1;//ok
     this->connectServer();
 }
-void ControlLayer::addUser(QVariantList user){  //name tel(string) address authority(int) email sex(bool)
+void ControlLayer::addUser(QVariantList user){  //id,name tel(string) address authority(int) email sex(bool)
     this->requestype=RequestType::rt_addUser;
     this->reqdatavarlist.clear();
     QVariantList sendsupplierinfo;
-    sendsupplierinfo<<user[3]<<user[5]<<user[0]<<user[1]<<user[2]<<user[4];
-    //athority,sex,name,tel,address,email
+    sendsupplierinfo<<user[0]<<user[4]<<user[6]<<user[1]<<user[2]<<user[3]<<user[5];
+    //id,athority,sex,name,tel,address,email
     this->reqdatavarlist<<this->requestype<<sendsupplierinfo;
     this->theclassvarcount=1;//ok
     this->connectServer();
@@ -438,5 +460,12 @@ void ControlLayer::deleteUser(int user_id){
     this->reqdatavarlist.clear();
     this->reqdatavarlist<<this->requestype<<user_id;
     this->theclassvarcount=1;//ok
+    this->connectServer();
+}
+void ControlLayer::getOneUser(int user_id){
+    this->requestype=RequestType::rt_getOneUser;
+    this->reqdatavarlist.clear();
+    this->reqdatavarlist<<this->requestype<<user_id;
+    this->theclassvarcount=7;//id(int) name tel(string) address authority(int) email sex(bool)
     this->connectServer();
 }

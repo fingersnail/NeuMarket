@@ -8,7 +8,7 @@ Rectangle {
     //property alias functionpart: functionpart
     property alias tableView: tableView
     property real tableWidth: 80
-    property real singleLineHeight:25
+    property real singleLineHeight:30
     property int current_index: -1
 
     Rectangle {
@@ -29,6 +29,7 @@ Rectangle {
             rowDelegate:rowDele
             backgroundVisible:false
             clip: true
+            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
             signal signalShowMenu(var id,int x,int y)
             ListModel
             {
@@ -60,12 +61,18 @@ Rectangle {
             Component{
                 id:headerDele
                 Rectangle{
+                    id:changecolorcom
                     implicitWidth:tableWidth
-                    implicitHeight: 25
-                    color:"#969696"
-                    Text{
+                    implicitHeight: 45
+                    //color:"midnightblue"
+                    Connections {
+                        target: color_pick_panel;
+                        onColorChange: {changecolorcom.color = Qt.rgba(red / 255,green / 255,blue / 255, 0.8)}
+                    }
+                    Text {
                         text:styleData.value
                         anchors.centerIn:parent
+                        font.pointSize: 14
                     }
                 }
             }
@@ -76,7 +83,7 @@ Rectangle {
                 {
                     width:tableWidth
                     height:singleLineHeight
-                    color:styleData.selected?"#450000ff":"#22000000"
+                    color:styleData.selected?"#450000ff":"#F0F0F0"
                     border.width: 1
                     border.color: "lightsteelblue"
                 }

@@ -15,7 +15,6 @@
         <file>PersonInfoPanel.qml</file>
         <file>SupplierInfoPanel.qml</file>
         <file>SaleQueryPanel.qml</file>
-        <file>SaleMaintainPanel.qml</file>
         <file>SaleStaticPanel.qml</file>
         <file>StockPlanPanel.qml</file>
         <file>RepertoryQueryPanel.qml</file>
@@ -72,5 +71,6 @@
         <file alias="click.png">pic/click.png</file>
         <file alias="add.png">pic/add.png</file>
         <file alias="arrow_down.png">pic/arrow_down.png</file>
+        <file alias="titleicon.png">pic/titleicon.png</file>
     </qresource>
 </RCC>

@@ -34,6 +34,7 @@ Rectangle{
             rowDelegate:rowDele
             backgroundVisible:false
             clip: true
+            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
             signal signalShowMenu(var id,int x,int y)
             ListModel {
                 id:tableModel

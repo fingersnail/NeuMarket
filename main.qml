@@ -6,10 +6,10 @@ import neuintership.market.ControlLayer 1.0
 
 Window {
     id: mainwindow
-//    width: 514
-//    height: 514
-    width: 1214
-    height: 814
+    width: 514
+    height: 514
+//    width: 1214
+//    height: 814
     visible: true
     color:'transparent'
     flags: Qt.FramelessWindowHint | Qt.WindowSystemMenuHint
@@ -46,7 +46,7 @@ Window {
         x: 7
         y: 7
         color:Qt.rgba(242/256,242/256,242/256,0.8)
-        visible: false
+        visible: true
     }
 
     FunctionPanel {
@@ -55,8 +55,8 @@ Window {
         height: 800
         x: 7
         y: 7
-        //color:Qt.rgba(40/256,176/256,242/256,0.8)
-        color:Qt.rgba(230/256,10/256,10/256,0.85)
-        visible: true
+        color:Qt.rgba(40/256,176/256,242/256,0.85)
+        //color:Qt.rgba(79/256,234/256,253/256,0.85)
+        visible: false
     }
 }

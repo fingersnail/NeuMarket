@@ -73,6 +73,7 @@ Canvas {
 // /////////////////////////////////////////////////////////////////
 
   function repaint() {
+      chart.init();
       chartAnimationProgress = 0;
       chartAnimator.start();
   }

@@ -77,6 +77,7 @@ Rectangle {
                     else
                         controller.getSaleRecords(product_search_id.text.trim(),
                                                   from_data, end_data);
+                    clear_input_area();
                 }
             }
         }
@@ -84,7 +85,7 @@ Rectangle {
     Rectangle {
         id:leftrect
         width:parent.width*0.5
-        height:(parent.height-searchrect.height-25)*0.85
+        height:(parent.height-searchrect.height-30)*0.85
         anchors.top:searchrect.bottom
         anchors.topMargin: 15
         z:1
@@ -102,6 +103,7 @@ Rectangle {
             rowDelegate:rowDele
             backgroundVisible:false
             clip: true
+            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
             signal signalShowMenu(var id,int x,int y)
             ListModel
             {
@@ -250,7 +252,7 @@ Rectangle {
                 //add item
                 id: buttonrect_one
                 width:leftrect.width
-                height:(parent.height-searchrect.height-25)*0.15
+                height:(parent.height-searchrect.height-30)*0.15
                 anchors.top:leftrect.bottom
 
                 color: 'transparent'
@@ -301,7 +303,7 @@ Rectangle {
                        id:item_id
                        width: rightrect.width*0.6
                        onFocusChanged: {
-                           if (focus && is_edit && text != "")
+                           if (!focus && is_edit && text != "")
                                controller.getProductName(text);
                        }
                    }
@@ -328,14 +330,14 @@ Rectangle {
                          text: "售价:     "
                          font.pointSize: 14
                       }
-                      MyTextField {
-                          id:item_price
-                          width: rightrect.width*0.6
-                      }
+//                      MyTextField {
+//                          id:item_price
+//                          width: rightrect.width*0.6
+//                      }
                       Text {
                           id:item_price_text
                           width: rightrect.width*0.6
-                          visible: false
+                          visible: true
                           font.pointSize: 14
                       }
                }
@@ -401,9 +403,9 @@ Rectangle {
         item_id.visible = true;
         item_id.text = "";
         item_name.text = "";
-        item_price_text.visible = false;
-        item_price.visible = true;
-        item_price.text = "";
+        item_price_text.text = "";
+        //item_price.visible = true;
+        //item_price.text = "";
         item_quantity_text.visible = false;
         item_quantity.visible = true;
         item_quantity.text = ""
@@ -417,8 +419,8 @@ Rectangle {
         item_id_text.visible = true;
         item_id_text.text = tableModel.get(index).var0;
         item_name.text = tableModel.get(index).var1;
-        item_price.visible = false;
-        item_price_text.visible = true;
+       // item_price.visible = false;
+        //item_price_text.visible = true;
         item_price_text.text = tableModel.get(index).var2;
         item_quantity.visible = false;
         item_quantity_text.visible = true;
@@ -429,7 +431,7 @@ Rectangle {
     }
 
     function add_sale_record() {
-        controller.addSaleRecord([item_id.text,item_price.text,
+        controller.addSaleRecord([item_id.text,item_price_text.text,
                             item_quantity.text]);
     }
 
@@ -462,6 +464,7 @@ Rectangle {
         target: controller
         onProductName:{
             item_name.text = name;
+            item_price_text.text = price;
         }
     }
 

@@ -30,38 +30,38 @@ public:
 enum RequestType{
 //登陆相关控制层
 rt_login,//0
-//requesttype,workernum,password
-//loginstate,workertype
+//0requesttype,1workernum,2password
+//0loginstate,1workertype
 //人事管理相关控制层
 rt_listAllWorker,//1
 //requesttype
-//id(int),name,tel(string),address,isPosition(bool),email,sex(bool)
+//0id(int),1name,2tel(string),3address,4isPosition(bool),5email,6sex(bool)
 rt_getSupplierList,//2
 //requesttype
-//suppliername,phone,pic,id,addr,descrip
+//0suppliername,1phone,2pic,3id,4addr,5descrip
 rt_getSupplierDetail,//3
 //requesttype,Supplierid
-//suppliername,phone,pic,id,addr,descrip
+//0suppliername,1phone,2pic,3id,4addr,5descrip
 rt_getWorkerDetail,//4
 //requesttype,Workerid
-//name,telephone,gender,employee_id,address,email,group_id
+//0name,1telephone,2gender,3employee_id,4address,5email,6group_id
 rt_saveWorker,//5
-//requesttype,id,athority=-1,sex,name,tel,address,email,isPosition
+//0requesttype,1id,2athority=-1,3sex,4name,5tel,6address,7email,8isPosition
 //ok
 rt_deleteWorker,//6
 //requesttype,Workerid
 //ok
 rt_addWorker,//7
-//requesttype,sex,name,tel,address,email,isPosition
+//0requesttype,1sex,2name,3tel,4address,5email,6isPosition
 //ok
 rt_saveSupplier,//8
-//requesttype,id,suppliername,addr,phone,descrip,pic
+//0requesttype,1id,2suppliername,3addr,4phone,5descrip,6pic
 //ok
 rt_deleteSupplier,//9
 //requesttype,Supplierid
 //ok
 rt_addSupplier,//10
-//requesttype,suppliername,addr,phone,descrip,pic
+//0requesttype,1suppliername,2addr,3phone,4descrip,5pic
 //ok
 rt_changePositionState,//11
 //requesttype,userId,isPosition
@@ -69,7 +69,7 @@ rt_changePositionState,//11
 //销售相关控制层
 rt_getSaleStatistic,//12
 //requesttype
-//年月，销售额
+//月，销售额
 rt_getSaleCatagoryStatistic,//13
 //requesttype,startYMD,endYMD
 //商品类别，库存
@@ -77,72 +77,74 @@ rt_getSaleRecords,//14
 //requesttype,startYMD,endYMD
 //记录id，商品id，数量，销售额，时间
 rt_getSaleRecords2,//15
-//requesttype,product_id,startYMD,endYMD
-//product_id,product_name,price,num,sale_time(string)
+//0requesttype,1product_id,2startYMD,3endYMD
+//0product_id,1product_name,2price,num,3sale_time(string)
 rt_getAllRecords,//16
 //requesttype
-//product_id product_name price num sale_time(string)
+//0product_id ,1product_name,2price,3num,4sale_time(string)
 rt_addSaleRecord,//17
-//requesttype,product_id,num,price
+//0requesttype,1product_id,2num,3totalprice
 //ok
 rt_getProductName,//18
-//requesttype,product_id
-//Qstring
+//requesttype,product_id,
+//0id(int), 1name, 2catagory(string), 3num ,4price ,5info ,6image(string)
 //库存相关控制层
 rt_getRepertoryStatistic,//19
 //requesttype
 //商品类别，库存量
 rt_getAllProducts,//20
 //requesttype
-//id(int), name, catagory(string), num ,price ,info ,image(string)
+//0id(int),1name, 2catagory(string), 3num ,4price ,5info ,6image(string)
 rt_saveProduct,//21
-//requesttype,id(int),name,catagory(string),num,price,info,image(string)
+//0id,1price,2name,3picture,4description,5num,6kind
 //ok
 rt_deleteProduct,//22
 //requesttype,id
 //ok
 rt_addProduct,//23
-//name catagory(string) num price info image(string)
+//0price,1name,2picture,3description,4num,5kind
 //ok
 //进货相关控制层
 rt_getStockPlans,//24
 //requesttype
-//purchase_id，product_id，plan_employee_id，purchase_employee_id,supplier_name，purchase_date，quantity，money_amount，is_finish，comment,product_name
+//0purchase_id，4product_id，2plan_employee_id，3purchase_employee_id,4supplier_name，5purchase_date，6quantity，7money_amount，8is_finish，9comment,10product_name
 rt_getSupplierNames,//25
 //requesttype
 //SupplierId,SupplierNames
 rt_savePlan,//26
-//requesttype,purchase_id，product_id，supplier_id，purchase_date,quantity，money_amount，comment
+//0requesttype,1purchase_id，2product_id，3supplier_id，4purchase_date,5quantity，6money_amount，7comment
 //ok
 rt_addPlan,//27
-//requesttype,product_id，supplier_id，purchase_date,quantity，money_amount，is_finish，comment
+//0product_id,1makeplanworkerid,2doplanworkerid=-1,3supplier_id，4purchase_date,5quantity，6money_amount，7is_finish，8comment
 //ok
 rt_deletePlan,//28
 //requesttype,planId
 //ok
 rt_changePlanState,//29
-//requesttype,planId,isfinished
+//0requesttype,1planId,2doplanworkerid,3isfinished
 //ok
 //系统管理相关控制层
 rt_getStuffMainInfo,//30
 //requesttype
 //id(int) name password(string)
 rt_saveStuffMainInfo, //31
-//requesttype,id(int) name password(string)
+//requesttype,id(int) password(string)
 //ok
 rt_getAllUsers,//32
 //requesttype
-//id(int) name tel(string) address authority(int) email sex(bool)
+//0id(int),1name,2tel(string),3address,4authority(int),5email,6sex(bool)
 rt_saveUser,//33
-//requesttype,id,athority,sex,name,tel,address,email
+//0requesttype,1id,2athority,3sex,4name,5tel,6address,7email
 //ok
 rt_addUser,//34
-//requesttype,athority,sex,name,tel,address,email
+//0requesttype,1id,2athority,3sex,4name,5tel,6address,7email
 //ok
 rt_deleteUser,//35
 //requesttype,user_id
 //ok
-
+rt_getOneUser,//36
+//requesttype,user_id
+//0id(int),1name,2tel(string),3address,4authority(int),5email,6sex(bool)
 };
 private:
 RequestType requestype;
@@ -229,7 +231,7 @@ signals:
     //void saleRecords2(TheClassModel *theclassmodel);
     void allSaleRecords(TheClassModel *theclassmodel);
     void saleRecordAdded(bool ok);
-    void productName(QString name);
+    void productName(QString name,double price);
 //库存相关控制层
 public:
 Q_INVOKABLE void getRepertoryStatistic();
@@ -272,6 +274,7 @@ Q_INVOKABLE void getAllUsers();
 Q_INVOKABLE void saveUser(QVariantList user);
 Q_INVOKABLE void addUser(QVariantList user);
 Q_INVOKABLE void deleteUser(int user_id);
+Q_INVOKABLE void getOneUser(int user_id);
 private:
 
 signals:
@@ -281,6 +284,8 @@ void allUsers(TheClassModel *theclassmodel);
 void userSaved(bool ok);
 void userAdded(bool ok);
 void userDeleted(bool ok);
+void oneUser(QVariantList one);
+
 };
 
 #endif // CONTROLLAYER_H

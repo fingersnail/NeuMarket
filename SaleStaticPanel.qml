@@ -124,8 +124,10 @@ Rectangle {
         refresh_button.color = "#2d91ea"
         if (is_total_sale)
             controller.getSaleStatistic();
-        else
+        else {
             controller.getSaleCatagoryStatistic(from_data, end_data);
+        }
+
       }
     }
   }
@@ -207,7 +209,7 @@ Rectangle {
                     "strokeColor": "rgba(151,187,205,1)",
                     "pointColor": "rgba(151,187,205,1)",
                     "pointStrokeColor": "#fff",
-                    "data": [65,59,9,81,56,55,800]
+                    "data": []
           }]
       }
 
@@ -238,8 +240,12 @@ Rectangle {
       chartRadarData.datasets[0].data = [];
       for (var i in cat) {
           chartRadarData.labels[i] = cat[i];
-          chartRadarData.datasets[0].data[i] = amount[i];
       }
+      for (var j in amount) {
+          chartRadarData.datasets[0].data[j] = amount[j];
+      }
+
+      chart_radar.chartData=chartRadarData;
       chart_radar.repaint();
   }
 

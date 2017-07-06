@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Rectangle {
-    property int user_function: navi_bar.user_function
+    property int user_function;
 
     ShadowRactangle{
         anchors.fill: parent
@@ -32,8 +32,8 @@ Rectangle {
         height: parent.height
         width: 85 + 50
         image_size: 85
-        user_function: 31
-        Component.onCompleted: set_function()
+        //user_function: 31
+        //Component.onCompleted: set_function()
 
         onMenu_clicked: {
             detail_panel.change_page(selected);
@@ -85,5 +85,31 @@ Rectangle {
             }
         }
 
+        Rectangle{
+            anchors.right:parent.right
+            anchors.bottom: parent.bottom
+            anchors.rightMargin: 25
+            anchors.bottomMargin: 10
+
+            width:300
+            height:20
+            color:"transparent"
+            Timer {
+                    interval: 500; running: true; repeat: true
+                    onTriggered: time.text = Qt.formatDateTime(new Date(), "dddd yyyy-MM-dd MMM  hh:mm:ss")
+
+                }
+                Text {
+                    id: time
+                    font.pointSize: 12
+                    color:"white"
+                }
+
+        }
+
+       function refresh() {
+           navi_bar.user_function = user_function;
+           navi_bar.set_function();
+       }
 }
 

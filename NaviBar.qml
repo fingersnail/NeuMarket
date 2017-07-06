@@ -73,8 +73,10 @@ Rectangle {
         }
         if (num > 1)
             enter_anims[0].running = true;
-        change_function(0);
-        menu_clicked(buttons[0].function_id);
+        if (num > 0) {
+            change_function(0);
+            menu_clicked(buttons[0].function_id);
+        }
     }
 
         MenuButton {

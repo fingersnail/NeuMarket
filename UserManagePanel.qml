@@ -10,6 +10,7 @@ Rectangle{
     property real tableWidth: 80
     property real signleLineHeight:30
     property int current_index: -1
+    property bool is_edit: true
     id:mainrect
 
     Rectangle {
@@ -26,6 +27,7 @@ Rectangle{
             rowDelegate:rowDele
             backgroundVisible:false
             clip: true
+            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
             signal signalShowMenu(var id,int x,int y)
             ListModel
             {
@@ -40,8 +42,8 @@ Rectangle{
 
                 id:tableModel
                 ListElement {
-                    c_id:"1"
-                    var0:"101"
+                    c_id:1
+                    var0:101
                     var1:"xiaoli"
                     var2:"14522231321"
                     var3:"iu"
@@ -50,8 +52,8 @@ Rectangle{
                     var6: true
                 }
                 ListElement {
-                    c_id:"2"
-                    var0:"102"
+                    c_id:2
+                    var0:102
                     var1:"xiaoming"
                     var2:"14522231321"
                     var3:"iu"
@@ -60,8 +62,8 @@ Rectangle{
                     var6: true
                 }
                 ListElement {
-                    c_id:"3"
-                    var0:"103"
+                    c_id:3
+                    var0:103
                     var1:"xiaoing"
                     var2:"14522231321"
                     var3:"iu"
@@ -160,11 +162,13 @@ Rectangle{
            onClicked:  {
                current_index = row;
                show_detail(row);
+               is_edit = false;
            }
 
            onDoubleClicked: {
                current_index = row;
                show_detail(row);
+               is_edit = false;
            }
         }
     }
@@ -193,6 +197,7 @@ Rectangle {
             parent.color = 'transparent'
         }
         onReleased: {
+            is_edit = true;
             clear_input_area();
         }
     }
@@ -254,7 +259,10 @@ Rectangle
             MyTextField {
                 id: person_id
                 width: mainrect.width*0.3
-
+                onFocusChanged: {
+                    if (!focus && is_edit && text != "")
+                        controller.getOneUser(text);
+                }
             }
         }
         Row {
@@ -499,7 +507,7 @@ Rectangle
     }
 
     function add_user() {
-        controller.addUser([person_name.text,person_tel.text,
+        controller.addUser([person_id.text,person_name.text,person_tel.text,
                             person_address.text,getAuthorityNum(),
                             person_email.text, man_check.checked]);
     }
@@ -552,6 +560,50 @@ Rectangle
                 refresh_list();
             } else {
                 color_false.running = true;
+            }
+        }
+    }
+
+    Connections {
+        target: controller
+        onOneUser:{
+            if(one[0] == person_id.text){
+                 //id,name tel(string) address authority(int) email sex(bool)
+                person_name.text = one[1];
+                person_tel.text = one[2];
+                person_address.text = one[3];
+                person_email.text = one[5];
+
+                var auth = authorityPaser(one[4]);
+                if(auth[0])
+                    authority1.checked = true;
+                else
+                    authority1.checked = false;
+                if(auth[1])
+                    authority2.checked = true;
+                else
+                    authority2.checked = false;
+                if(auth[2])
+                    authority3.checked = true;
+                else
+                    authority3.checked = false;
+                if(auth[3])
+                    authority4.checked = true;
+                else
+                    authority4.checked = false;
+                if(auth[4])
+                    authority5.checked = true;
+                else
+                    authority5.checked = false;
+
+                if (one[6]) {
+                    woman_check.checked = false;
+                    man_check.checked = true;
+                }
+                else {
+                    man_check.checked = false;
+                    woman_check.checked = true;
+                }
             }
         }
     }

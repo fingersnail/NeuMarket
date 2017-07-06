@@ -8,7 +8,7 @@ Rectangle {
     //property alias functionpart: functionpart
     property alias tableView: tableView
     property real tableWidth: 80
-    property real singleLineHeight:25
+    property real singleLineHeight:30
     property int current_index: -1
     property date current_date
     property var supplier_list: {"id":[], "name":[]};
@@ -34,6 +34,7 @@ Rectangle {
             rowDelegate:rowDele
             backgroundVisible:false
             clip: true
+            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
             signal signalShowMenu(var id,int x,int y)
             ListModel
             {
@@ -85,12 +86,17 @@ Rectangle {
             Component{
                 id:headerDele
                 Rectangle{
+                    id:changecolorcom
                     implicitWidth:tableWidth
-                    implicitHeight: 25
-                    color:"#969696"
-                    Text{
+                    implicitHeight: 45
+                    Connections {
+                        target: color_pick_panel;
+                        onColorChange: {changecolorcom.color = Qt.rgba(red / 255,green / 255,blue / 255, 0.8)}
+                    }
+                    Text {
                         text:styleData.value
                         anchors.centerIn:parent
+                        font.pointSize: 14
                     }
                 }
             }
@@ -100,7 +106,7 @@ Rectangle {
                 Rectangle {
                     width:tableWidth
                     height:singleLineHeight
-                    color:styleData.selected?"#450000ff":"#22000000"
+                    color:styleData.selected?"#450000ff":"#F0F0F0"
                     border.width: 1
                     border.color: "lightsteelblue"
                 }
@@ -453,7 +459,6 @@ MessageDialog{
 function active() {
     visible = true;
     refresh_list();
-    clear_input_area();
 }
 
 function refresh_list() {
@@ -518,7 +523,7 @@ function save_plan() {
 }
 
 function add_plan() {
-    controller.savePlan([product_id.text, supplier_list.id[suppliers.currentIndex],
+    controller.addPlan([product_id.text, supplier_list.id[suppliers.currentIndex],
                          plan_date.dateValue,product_num.text,
                          product_price.text,finish_check.checked,
                          additional_info.text]);
@@ -532,10 +537,13 @@ Connections {
         for (var i = 0; i <theclassmodel.rowCount(); i++) {
             tableModel.append({"var0":theclassmodel.rowColData(i,0), "var1":theclassmodel.rowColData(i,1),
                              "var2":theclassmodel.rowColData(i,2), "var3":theclassmodel.rowColData(i,3),
-                             "var4":theclassmodel.rowColData(i,4), "var5":theclassmodel.rowColData(i,5)})
+                             "var4":theclassmodel.rowColData(i,4), "var5":theclassmodel.rowColData(i,5),
+                             "var6":theclassmodel.rowColData(i,6), "var7":theclassmodel.rowColData(i,7),
+                             "var8":theclassmodel.rowColData(i,8), "var9":theclassmodel.rowColData(i,9),
+                             "var10":theclassmodel.rowColData(i,10)})
         }
         current_index = -1;
-        console.log("ononon");
+        clear_input_area();
     }
 }
 
